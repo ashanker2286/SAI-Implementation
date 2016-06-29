@@ -326,6 +326,8 @@ sai_status_t check_attribs_metadata(_In_ uint32_t                            att
              (NULL == attr_list[ii].value.aclfield.mask.u8list.list)) ||
             ((SAI_ATTR_VAL_TYPE_ACLACTION_OBJLIST == functionality_attr[index].type) &&
              (NULL == attr_list[ii].value.aclaction.parameter.objlist.list)) ||
+            ((SAI_ATTR_VAL_TYPE_TUNNELMAP == functionality_attr[index].type) &&
+             (NULL == attr_list[ii].value.tunnelmap.list)) ||
             ((SAI_ATTR_VAL_TYPE_QOSMAP == functionality_attr[index].type) &&
              (NULL == attr_list[ii].value.qosmap.list))) {
             SX_LOG_ERR("Null list attribute %s at index %d\n",
@@ -519,7 +521,8 @@ sai_status_t sai_set_attribute(_In_ const sai_object_key_t             *key,
     SX_LOG_ENTER();
 
     if (SAI_STATUS_SUCCESS !=
-        (status = check_attribs_metadata(1, attr, functionality_attr, functionality_vendor_attr, SAI_COMMON_API_SET))) {
+        (status =
+             check_attribs_metadata(1, attr, functionality_attr, functionality_vendor_attr, SAI_COMMON_API_SET))) {
         SX_LOG_ERR("Failed attribs check, key:%s\n", key_str);
         return status;
     }
@@ -1032,6 +1035,7 @@ sai_status_t sai_value_to_str(_In_ sai_attribute_value_t      value,
     case SAI_ATTR_VAL_TYPE_ACLFIELD_OBJLIST:
     case SAI_ATTR_VAL_TYPE_ACLFIELD_U8LIST:
     case SAI_ATTR_VAL_TYPE_ACLACTION_OBJLIST:
+    case SAI_ATTR_VAL_TYPE_TUNNELMAP:
         if (SAI_ATTR_VAL_TYPE_PORTBREAKOUT == type) {
             pos += snprintf(value_str, max_length, "breakout mode %d.", value.portbreakout.breakout_mode);
         }
@@ -1058,6 +1062,7 @@ sai_status_t sai_value_to_str(_In_ sai_attribute_value_t      value,
                 (SAI_ATTR_VAL_TYPE_ACLFIELD_OBJLIST == type) ? value.aclfield.data.objlist.count :
                 (SAI_ATTR_VAL_TYPE_ACLFIELD_U8LIST == type) ? value.aclfield.data.u8list.count :
                 (SAI_ATTR_VAL_TYPE_ACLACTION_OBJLIST == type) ? value.aclaction.parameter.objlist.count :
+                (SAI_ATTR_VAL_TYPE_TUNNELMAP == type) ? value.tunnelmap.count :
                 value.portbreakout.port_list.count;
         pos += snprintf(value_str + pos, max_length - pos, "%u : [", count);
         if (pos > max_length) {
@@ -1097,6 +1102,13 @@ sai_status_t sai_value_to_str(_In_ sai_attribute_value_t      value,
                 pos +=
                     snprintf(value_str + pos, max_length - pos, " %" PRIx64,
                              value.aclaction.parameter.objlist.list[ii]);
+            } else if (SAI_ATTR_VAL_TYPE_TUNNELMAP == type) {
+                pos +=
+                    snprintf(value_str + pos, max_length - pos, " %u,%u,%u,%u->%u,%u,%u,%u",
+                             value.tunnelmap.list[ii].key.oecn, value.tunnelmap.list[ii].key.uecn,
+                             value.tunnelmap.list[ii].key.vlan_id, value.tunnelmap.list[ii].key.vni_id,
+                             value.tunnelmap.list[ii].value.oecn, value.tunnelmap.list[ii].value.uecn,
+                             value.tunnelmap.list[ii].value.vlan_id, value.tunnelmap.list[ii].value.vni_id);
             } else {
                 pos += snprintf(value_str + pos, max_length - pos, " %" PRIx64, value.portbreakout.port_list.list[ii]);
             }
@@ -1113,6 +1125,14 @@ sai_status_t sai_value_to_str(_In_ sai_attribute_value_t      value,
 
     case SAI_ATTR_VAL_TYPE_S32RANGE:
         snprintf(value_str, max_length, "[%d,%d]", value.s32range.min, value.s32range.max);
+        break;
+
+    case SAI_ATTR_VAL_TYPE_ACLFIELD_BOOLDATA:
+        snprintf(value_str,
+                 max_length,
+                 "%u,%02x",
+                 value.aclfield.enable,
+                 value.aclfield.data.booldata);
         break;
 
     case SAI_ATTR_VAL_TYPE_ACLFIELD_U8:
@@ -1484,8 +1504,7 @@ sai_status_t mlnx_create_object(sai_object_type_t type,
     return SAI_STATUS_SUCCESS;
 }
 
-sai_status_t mlnx_create_queue(_In_ sx_port_log_id_t port_id, _In_ uint8_t index,
-                               _Out_ sai_object_id_t *id)
+sai_status_t mlnx_create_queue(_In_ sx_port_log_id_t port_id, _In_ uint8_t index, _Out_ sai_object_id_t *id)
 {
     uint8_t ext_data[EXTENDED_DATA_SIZE];
 
@@ -1494,11 +1513,9 @@ sai_status_t mlnx_create_queue(_In_ sx_port_log_id_t port_id, _In_ uint8_t index
     return mlnx_create_object(SAI_OBJECT_TYPE_QUEUE, port_id, ext_data, id);
 }
 
-sai_status_t mlnx_queue_parse_id(_In_ sai_object_id_t id,
-                                 _Out_ sx_port_log_id_t *port_id,
-                                 _Out_ uint8_t *queue_index)
+sai_status_t mlnx_queue_parse_id(_In_ sai_object_id_t id, _Out_ sx_port_log_id_t *port_id, _Out_ uint8_t *queue_index)
 {
-    uint8_t ext_data[EXTENDED_DATA_SIZE];
+    uint8_t      ext_data[EXTENDED_DATA_SIZE];
     sai_status_t status;
 
     status = mlnx_object_to_type(id, SAI_OBJECT_TYPE_QUEUE, port_id, ext_data);
@@ -1513,8 +1530,9 @@ sai_status_t mlnx_queue_parse_id(_In_ sai_object_id_t id,
     return SAI_STATUS_SUCCESS;
 }
 
-sai_status_t mlnx_create_sched_group(_In_ sx_port_log_id_t port_id,
-                                     _In_ uint8_t level, _In_ uint8_t index,
+sai_status_t mlnx_create_sched_group(_In_ sx_port_log_id_t  port_id,
+                                     _In_ uint8_t           level,
+                                     _In_ uint8_t           index,
                                      _Out_ sai_object_id_t *id)
 {
     uint8_t ext_data[EXTENDED_DATA_SIZE];
@@ -1525,21 +1543,21 @@ sai_status_t mlnx_create_sched_group(_In_ sx_port_log_id_t port_id,
     return mlnx_create_object(SAI_OBJECT_TYPE_SCHEDULER_GROUP, port_id, ext_data, id);
 }
 
-sai_status_t mlnx_sched_group_parse_id(_In_ sai_object_id_t id,
+sai_status_t mlnx_sched_group_parse_id(_In_ sai_object_id_t    id,
                                        _Out_ sx_port_log_id_t *port_id_ptr,
-                                       _Out_ uint8_t *level_ptr,
-                                       _Out_ uint8_t *index_ptr)
+                                       _Out_ uint8_t          *level_ptr,
+                                       _Out_ uint8_t          *index_ptr)
 {
-    uint8_t ext_data[EXTENDED_DATA_SIZE];
+    uint8_t          ext_data[EXTENDED_DATA_SIZE];
     sx_port_log_id_t port_id;
-    sai_status_t status;
+    sai_status_t     status;
 
     status = mlnx_object_to_type(id, SAI_OBJECT_TYPE_SCHEDULER_GROUP, &port_id, ext_data);
     if (status != SAI_STATUS_SUCCESS) {
         return status;
     }
 
-    if (ext_data[0] == 0 && ext_data[1] > 0) {
+    if ((ext_data[0] == 0) && (ext_data[1] > 0)) {
         SX_LOG_ERR("Invalid root scheduler group index %u - max allowed value is 0\n", ext_data[1]);
         return SAI_STATUS_INVALID_PARAMETER;
     }

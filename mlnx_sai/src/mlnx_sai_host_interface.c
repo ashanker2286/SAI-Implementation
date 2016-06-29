@@ -50,20 +50,22 @@ static const sai_attribute_entry_t trap_group_attribs[] = {
       "", SAI_ATTR_VAL_TYPE_UNDETERMINED }
 };
 const sai_attribute_entry_t        host_interface_packet_attribs[] = {
-    { SAI_HOSTIF_PACKET_TRAP_ID, false, false, false, false,
+    { SAI_HOSTIF_PACKET_ATTR_TRAP_ID, false, false, false, false,
       "Packet trap ID", SAI_ATTR_VAL_TYPE_S32 },
-    { SAI_HOSTIF_PACKET_INGRESS_PORT, false, false, false, false,
+    { SAI_HOSTIF_PACKET_ATTR_USER_TRAP_ID, false, false, false, false,
+      "User def trap ID", SAI_ATTR_VAL_TYPE_S32 },
+    { SAI_HOSTIF_PACKET_ATTR_INGRESS_PORT, false, false, false, false,
       "Packet ingress port", SAI_ATTR_VAL_TYPE_OID },
-    { SAI_HOSTIF_PACKET_INGRESS_LAG, false, false, false, false,
+    { SAI_HOSTIF_PACKET_ATTR_INGRESS_LAG, false, false, false, false,
       "Packet ingress LAG", SAI_ATTR_VAL_TYPE_OID },
-    { SAI_HOSTIF_PACKET_TX_TYPE, true, true, false, false,
+    { SAI_HOSTIF_PACKET_ATTR_TX_TYPE, true, true, false, false,
       "Packet transmit type", SAI_ATTR_VAL_TYPE_S32 },
-    { SAI_HOSTIF_PACKET_EGRESS_PORT_OR_LAG, false, true, false, false,
+    { SAI_HOSTIF_PACKET_ATTR_EGRESS_PORT_OR_LAG, false, true, false, false,
       "Packet egress port or LAG", SAI_ATTR_VAL_TYPE_OID },
     { END_FUNCTIONALITY_ATTRIBS_ID, false, false, false, false,
       "", SAI_ATTR_VAL_TYPE_UNDETERMINED }
 };
-const sai_attribute_entry_t        trap_attribs[] = {
+static const sai_attribute_entry_t trap_attribs[] = {
     { SAI_HOSTIF_TRAP_ATTR_PACKET_ACTION, false, false, true, true,
       "Trap action", SAI_ATTR_VAL_TYPE_S32 },
     { SAI_HOSTIF_TRAP_ATTR_TRAP_PRIORITY, false, false, true, true,
@@ -79,7 +81,7 @@ const sai_attribute_entry_t        trap_attribs[] = {
     { END_FUNCTIONALITY_ATTRIBS_ID, false, false, false, false,
       "", SAI_ATTR_VAL_TYPE_UNDETERMINED }
 };
-const sai_attribute_entry_t        user_defined_trap_attribs[] = {
+static const sai_attribute_entry_t user_defined_trap_attribs[] = {
     { SAI_HOSTIF_USER_DEFINED_TRAP_ATTR_TRAP_CHANNEL, false, false, true, true,
       "User defined trap channel", SAI_ATTR_VAL_TYPE_S32 },
     { SAI_HOSTIF_USER_DEFINED_TRAP_ATTR_FD, false, false, true, true,
@@ -87,82 +89,79 @@ const sai_attribute_entry_t        user_defined_trap_attribs[] = {
     { END_FUNCTIONALITY_ATTRIBS_ID, false, false, false, false,
       "", SAI_ATTR_VAL_TYPE_UNDETERMINED }
 };
-
-sai_status_t mlnx_host_interface_type_get(_In_ const sai_object_key_t   *key,
-                                          _Inout_ sai_attribute_value_t *value,
-                                          _In_ uint32_t                  attr_index,
-                                          _Inout_ vendor_cache_t        *cache,
-                                          void                          *arg);
-sai_status_t mlnx_host_interface_rif_port_get(_In_ const sai_object_key_t   *key,
+static sai_status_t mlnx_host_interface_type_get(_In_ const sai_object_key_t   *key,
+                                                 _Inout_ sai_attribute_value_t *value,
+                                                 _In_ uint32_t                  attr_index,
+                                                 _Inout_ vendor_cache_t        *cache,
+                                                 void                          *arg);
+static sai_status_t mlnx_host_interface_rif_port_get(_In_ const sai_object_key_t   *key,
+                                                     _Inout_ sai_attribute_value_t *value,
+                                                     _In_ uint32_t                  attr_index,
+                                                     _Inout_ vendor_cache_t        *cache,
+                                                     void                          *arg);
+static sai_status_t mlnx_host_interface_name_get(_In_ const sai_object_key_t   *key,
+                                                 _Inout_ sai_attribute_value_t *value,
+                                                 _In_ uint32_t                  attr_index,
+                                                 _Inout_ vendor_cache_t        *cache,
+                                                 void                          *arg);
+static sai_status_t mlnx_host_interface_name_set(_In_ const sai_object_key_t      *key,
+                                                 _In_ const sai_attribute_value_t *value,
+                                                 void                             *arg);
+static sai_status_t mlnx_trap_group_admin_get(_In_ const sai_object_key_t   *key,
                                               _Inout_ sai_attribute_value_t *value,
                                               _In_ uint32_t                  attr_index,
                                               _Inout_ vendor_cache_t        *cache,
                                               void                          *arg);
-sai_status_t mlnx_host_interface_name_get(_In_ const sai_object_key_t   *key,
+static sai_status_t mlnx_trap_group_admin_set(_In_ const sai_object_key_t      *key,
+                                              _In_ const sai_attribute_value_t *value,
+                                              void                             *arg);
+static sai_status_t mlnx_trap_group_prio_get(_In_ const sai_object_key_t   *key,
+                                             _Inout_ sai_attribute_value_t *value,
+                                             _In_ uint32_t                  attr_index,
+                                             _Inout_ vendor_cache_t        *cache,
+                                             void                          *arg);
+static sai_status_t mlnx_trap_channel_get(_In_ const sai_object_key_t   *key,
                                           _Inout_ sai_attribute_value_t *value,
                                           _In_ uint32_t                  attr_index,
                                           _Inout_ vendor_cache_t        *cache,
                                           void                          *arg);
-sai_status_t mlnx_host_interface_name_set(_In_ const sai_object_key_t      *key,
-                                          _In_ const sai_attribute_value_t *value,
-                                          void                             *arg);
-sai_status_t mlnx_trap_group_admin_get(_In_ const sai_object_key_t   *key,
-                                       _Inout_ sai_attribute_value_t *value,
-                                       _In_ uint32_t                  attr_index,
-                                       _Inout_ vendor_cache_t        *cache,
-                                       void                          *arg);
-sai_status_t mlnx_trap_group_admin_set(_In_ const sai_object_key_t      *key,
-                                       _In_ const sai_attribute_value_t *value,
-                                       void                             *arg);
-sai_status_t mlnx_trap_group_prio_get(_In_ const sai_object_key_t   *key,
-                                      _Inout_ sai_attribute_value_t *value,
-                                      _In_ uint32_t                  attr_index,
-                                      _Inout_ vendor_cache_t        *cache,
-                                      void                          *arg);
-sai_status_t mlnx_trap_channel_get(_In_ const sai_object_key_t   *key,
-                                   _Inout_ sai_attribute_value_t *value,
-                                   _In_ uint32_t                  attr_index,
-                                   _Inout_ vendor_cache_t        *cache,
-                                   void                          *arg);
-sai_status_t mlnx_trap_group_policer_get(_In_ const sai_object_key_t   *key,
+static sai_status_t mlnx_trap_group_policer_get(_In_ const sai_object_key_t   *key,
+                                                _Inout_ sai_attribute_value_t *value,
+                                                _In_ uint32_t                  attr_index,
+                                                _Inout_ vendor_cache_t        *cache,
+                                                void                          *arg);
+static sai_status_t mlnx_trap_group_policer_set(_In_ const sai_object_key_t      *key,
+                                                _In_ const sai_attribute_value_t *value,
+                                                void                             *arg);
+static sai_status_t mlnx_trap_group_policer_set_internal(_In_ sai_object_id_t trap_id,
+                                                         _In_ sai_object_id_t policer_id);
+static sai_status_t mlnx_trap_fd_get(_In_ const sai_object_key_t   *key,
+                                     _Inout_ sai_attribute_value_t *value,
+                                     _In_ uint32_t                  attr_index,
+                                     _Inout_ vendor_cache_t        *cache,
+                                     void                          *arg);
+static sai_status_t mlnx_trap_group_get(_In_ const sai_object_key_t   *key,
+                                        _Inout_ sai_attribute_value_t *value,
+                                        _In_ uint32_t                  attr_index,
+                                        _Inout_ vendor_cache_t        *cache,
+                                        void                          *arg);
+static sai_status_t mlnx_trap_action_get(_In_ const sai_object_key_t   *key,
                                          _Inout_ sai_attribute_value_t *value,
                                          _In_ uint32_t                  attr_index,
                                          _Inout_ vendor_cache_t        *cache,
                                          void                          *arg);
-sai_status_t mlnx_trap_group_policer_set(_In_ const sai_object_key_t      *key,
+static sai_status_t mlnx_trap_channel_set(_In_ const sai_object_key_t      *key,
+                                          _In_ const sai_attribute_value_t *value,
+                                          void                             *arg);
+static sai_status_t mlnx_trap_fd_set(_In_ const sai_object_key_t      *key,
+                                     _In_ const sai_attribute_value_t *value,
+                                     void                             *arg);
+static sai_status_t mlnx_trap_group_set(_In_ const sai_object_key_t      *key,
+                                        _In_ const sai_attribute_value_t *value,
+                                        void                             *arg);
+static sai_status_t mlnx_trap_action_set(_In_ const sai_object_key_t      *key,
                                          _In_ const sai_attribute_value_t *value,
                                          void                             *arg);
-sai_status_t mlnx_trap_group_policer_set_internal(_In_ sai_object_id_t trap_id, _In_ sai_object_id_t policer_id);
-
-sai_status_t mlnx_trap_fd_get(_In_ const sai_object_key_t   *key,
-                              _Inout_ sai_attribute_value_t *value,
-                              _In_ uint32_t                  attr_index,
-                              _Inout_ vendor_cache_t        *cache,
-                              void                          *arg);
-sai_status_t mlnx_trap_group_get(_In_ const sai_object_key_t   *key,
-                                 _Inout_ sai_attribute_value_t *value,
-                                 _In_ uint32_t                  attr_index,
-                                 _Inout_ vendor_cache_t        *cache,
-                                 void                          *arg);
-sai_status_t mlnx_trap_action_get(_In_ const sai_object_key_t   *key,
-                                  _Inout_ sai_attribute_value_t *value,
-                                  _In_ uint32_t                  attr_index,
-                                  _Inout_ vendor_cache_t        *cache,
-                                  void                          *arg);
-sai_status_t mlnx_trap_channel_set(_In_ const sai_object_key_t      *key,
-                                   _In_ const sai_attribute_value_t *value,
-                                   void                             *arg);
-sai_status_t mlnx_trap_fd_set(_In_ const sai_object_key_t      *key,
-                              _In_ const sai_attribute_value_t *value,
-                              void                             *arg);
-sai_status_t mlnx_trap_group_set(_In_ const sai_object_key_t      *key,
-                                 _In_ const sai_attribute_value_t *value,
-                                 void                             *arg);
-sai_status_t mlnx_trap_action_set(_In_ const sai_object_key_t      *key,
-                                  _In_ const sai_attribute_value_t *value,
-                                  void                             *arg);
-
-
 static const sai_vendor_attribute_entry_t host_interface_vendor_attribs[] = {
     { SAI_HOSTIF_ATTR_TYPE,
       { true, false, false, true },
@@ -247,27 +246,32 @@ static const sai_vendor_attribute_entry_t user_defined_trap_vendor_attribs[] = {
       mlnx_trap_fd_set, (void*)MLNX_TRAP_TYPE_USER_DEFINED },
 };
 static const sai_vendor_attribute_entry_t host_interface_packet_vendor_attribs[] = {
-    { SAI_HOSTIF_PACKET_TRAP_ID,
+    { SAI_HOSTIF_PACKET_ATTR_TRAP_ID,
       { false, false, false, false },
       { false, false, false, false },
       NULL, NULL,
       NULL, NULL },
-    { SAI_HOSTIF_PACKET_INGRESS_PORT,
+    { SAI_HOSTIF_PACKET_ATTR_USER_TRAP_ID,
       { false, false, false, false },
       { false, false, false, false },
       NULL, NULL,
       NULL, NULL },
-    { SAI_HOSTIF_PACKET_INGRESS_LAG,
+    { SAI_HOSTIF_PACKET_ATTR_INGRESS_PORT,
       { false, false, false, false },
       { false, false, false, false },
       NULL, NULL,
       NULL, NULL },
-    { SAI_HOSTIF_PACKET_TX_TYPE,
+    { SAI_HOSTIF_PACKET_ATTR_INGRESS_LAG,
+      { false, false, false, false },
+      { false, false, false, false },
+      NULL, NULL,
+      NULL, NULL },
+    { SAI_HOSTIF_PACKET_ATTR_TX_TYPE,
       { true, false, false, false },
       { true, false, false, false },
       NULL, NULL,
       NULL, NULL },
-    { SAI_HOSTIF_PACKET_EGRESS_PORT_OR_LAG,
+    { SAI_HOSTIF_PACKET_ATTR_EGRESS_PORT_OR_LAG,
       { true, false, false, false },
       { true, false, false, false },
       NULL, NULL,
@@ -429,9 +433,9 @@ static void host_interface_key_to_str(_In_ sai_object_id_t hif_id, _Out_ char *k
  *    SAI_STATUS_SUCCESS on success
  *    Failure status code on error
  */
-sai_status_t mlnx_create_host_interface(_Out_ sai_object_id_t     * hif_id,
-                                        _In_ uint32_t               attr_count,
-                                        _In_ const sai_attribute_t *attr_list)
+static sai_status_t mlnx_create_host_interface(_Out_ sai_object_id_t     * hif_id,
+                                               _In_ uint32_t               attr_count,
+                                               _In_ const sai_attribute_t *attr_list)
 {
     sai_status_t                 status;
     const sai_attribute_value_t *type, *rif_port, *name;
@@ -562,7 +566,7 @@ sai_status_t mlnx_create_host_interface(_Out_ sai_object_id_t     * hif_id,
         cl_plock_acquire(&g_sai_db_ptr->p_lock);
         snprintf(command,
                  sizeof(command),
-                 "ifconfig %s hw ether %s > /dev/null 2>&1",
+                 "ip link set dev %s address %s > /dev/null 2>&1",
                  name->chardata,
                  g_sai_db_ptr->dev_mac);
         cl_plock_release(&g_sai_db_ptr->p_lock);
@@ -645,7 +649,7 @@ sai_status_t mlnx_create_host_interface(_Out_ sai_object_id_t     * hif_id,
  *    SAI_STATUS_SUCCESS on success
  *    Failure status code on error
  */
-sai_status_t mlnx_remove_host_interface(_In_ sai_object_id_t hif_id)
+static sai_status_t mlnx_remove_host_interface(_In_ sai_object_id_t hif_id)
 {
     char         key_str[MAX_KEY_STR_LEN];
     char         ifname[IF_NAMESIZE];
@@ -711,7 +715,7 @@ sai_status_t mlnx_remove_host_interface(_In_ sai_object_id_t hif_id)
  *    SAI_STATUS_SUCCESS on success
  *    Failure status code on error
  */
-sai_status_t mlnx_set_host_interface_attribute(_In_ sai_object_id_t hif_id, _In_ const sai_attribute_t *attr)
+static sai_status_t mlnx_set_host_interface_attribute(_In_ sai_object_id_t hif_id, _In_ const sai_attribute_t *attr)
 {
     const sai_object_key_t key = { .object_id = hif_id };
     char                   key_str[MAX_KEY_STR_LEN];
@@ -735,9 +739,9 @@ sai_status_t mlnx_set_host_interface_attribute(_In_ sai_object_id_t hif_id, _In_
  *    SAI_STATUS_SUCCESS on success
  *    Failure status code on error
  */
-sai_status_t mlnx_get_host_interface_attribute(_In_ sai_object_id_t     hif_id,
-                                               _In_ uint32_t            attr_count,
-                                               _Inout_ sai_attribute_t *attr_list)
+static sai_status_t mlnx_get_host_interface_attribute(_In_ sai_object_id_t     hif_id,
+                                                      _In_ uint32_t            attr_count,
+                                                      _Inout_ sai_attribute_t *attr_list)
 {
     const sai_object_key_t key = { .object_id = hif_id };
     char                   key_str[MAX_KEY_STR_LEN];
@@ -754,11 +758,11 @@ sai_status_t mlnx_get_host_interface_attribute(_In_ sai_object_id_t     hif_id,
 }
 
 /* Type [sai_host_interface_type_t] */
-sai_status_t mlnx_host_interface_type_get(_In_ const sai_object_key_t   *key,
-                                          _Inout_ sai_attribute_value_t *value,
-                                          _In_ uint32_t                  attr_index,
-                                          _Inout_ vendor_cache_t        *cache,
-                                          void                          *arg)
+static sai_status_t mlnx_host_interface_type_get(_In_ const sai_object_key_t   *key,
+                                                 _Inout_ sai_attribute_value_t *value,
+                                                 _In_ uint32_t                  attr_index,
+                                                 _Inout_ vendor_cache_t        *cache,
+                                                 void                          *arg)
 {
     uint32_t     hif_id;
     sai_status_t status;
@@ -782,11 +786,11 @@ sai_status_t mlnx_host_interface_type_get(_In_ const sai_object_key_t   *key,
 }
 
 /* Assosiated port or router interface [sai_object_id_t] */
-sai_status_t mlnx_host_interface_rif_port_get(_In_ const sai_object_key_t   *key,
-                                              _Inout_ sai_attribute_value_t *value,
-                                              _In_ uint32_t                  attr_index,
-                                              _Inout_ vendor_cache_t        *cache,
-                                              void                          *arg)
+static sai_status_t mlnx_host_interface_rif_port_get(_In_ const sai_object_key_t   *key,
+                                                     _Inout_ sai_attribute_value_t *value,
+                                                     _In_ uint32_t                  attr_index,
+                                                     _Inout_ vendor_cache_t        *cache,
+                                                     void                          *arg)
 {
     uint32_t     hif_id, rif_id, port_id = 0;
     sai_status_t status;
@@ -830,11 +834,11 @@ sai_status_t mlnx_host_interface_rif_port_get(_In_ const sai_object_key_t   *key
 /* Name [char[HOST_INTERFACE_NAME_SIZE]] (MANDATORY_ON_CREATE)
  * The maximum number of charactars for the name is HOST_INTERFACE_NAME_SIZE - 1 since
  * it needs the terminating null byte ('\0') at the end.  */
-sai_status_t mlnx_host_interface_name_get(_In_ const sai_object_key_t   *key,
-                                          _Inout_ sai_attribute_value_t *value,
-                                          _In_ uint32_t                  attr_index,
-                                          _Inout_ vendor_cache_t        *cache,
-                                          void                          *arg)
+static sai_status_t mlnx_host_interface_name_get(_In_ const sai_object_key_t   *key,
+                                                 _Inout_ sai_attribute_value_t *value,
+                                                 _In_ uint32_t                  attr_index,
+                                                 _Inout_ vendor_cache_t        *cache,
+                                                 void                          *arg)
 {
     char         ifname[IF_NAMESIZE];
     uint32_t     hif_id;
@@ -867,9 +871,9 @@ sai_status_t mlnx_host_interface_name_get(_In_ const sai_object_key_t   *key,
 /* Name [char[HOST_INTERFACE_NAME_SIZE]]
  * The maximum number of charactars for the name is HOST_INTERFACE_NAME_SIZE - 1 since
  * it needs the terminating null byte ('\0') at the end.  */
-sai_status_t mlnx_host_interface_name_set(_In_ const sai_object_key_t      *key,
-                                          _In_ const sai_attribute_value_t *value,
-                                          void                             *arg)
+static sai_status_t mlnx_host_interface_name_set(_In_ const sai_object_key_t      *key,
+                                                 _In_ const sai_attribute_value_t *value,
+                                                 void                             *arg)
 {
     char         ifname[IF_NAMESIZE];
     int          system_err;
@@ -907,11 +911,11 @@ sai_status_t mlnx_host_interface_name_set(_In_ const sai_object_key_t      *key,
 }
 
 /* Admin Mode [bool] */
-sai_status_t mlnx_trap_group_admin_get(_In_ const sai_object_key_t   *key,
-                                       _Inout_ sai_attribute_value_t *value,
-                                       _In_ uint32_t                  attr_index,
-                                       _Inout_ vendor_cache_t        *cache,
-                                       void                          *arg)
+static sai_status_t mlnx_trap_group_admin_get(_In_ const sai_object_key_t   *key,
+                                              _Inout_ sai_attribute_value_t *value,
+                                              _In_ uint32_t                  attr_index,
+                                              _Inout_ vendor_cache_t        *cache,
+                                              void                          *arg)
 {
     SX_LOG_ENTER();
 
@@ -922,9 +926,9 @@ sai_status_t mlnx_trap_group_admin_get(_In_ const sai_object_key_t   *key,
 }
 
 /* Admin Mode [bool] */
-sai_status_t mlnx_trap_group_admin_set(_In_ const sai_object_key_t      *key,
-                                       _In_ const sai_attribute_value_t *value,
-                                       void                             *arg)
+static sai_status_t mlnx_trap_group_admin_set(_In_ const sai_object_key_t      *key,
+                                              _In_ const sai_attribute_value_t *value,
+                                              void                             *arg)
 {
     SX_LOG_ENTER();
 
@@ -935,32 +939,41 @@ sai_status_t mlnx_trap_group_admin_set(_In_ const sai_object_key_t      *key,
 }
 
 /* group priority [uint32_t] */
-sai_status_t mlnx_trap_group_prio_get(_In_ const sai_object_key_t   *key,
-                                      _Inout_ sai_attribute_value_t *value,
-                                      _In_ uint32_t                  attr_index,
-                                      _Inout_ vendor_cache_t        *cache,
-                                      void                          *arg)
+static sai_status_t mlnx_trap_group_prio_get(_In_ const sai_object_key_t   *key,
+                                             _Inout_ sai_attribute_value_t *value,
+                                             _In_ uint32_t                  attr_index,
+                                             _Inout_ vendor_cache_t        *cache,
+                                             void                          *arg)
 {
-    sai_status_t status;
+    sai_status_t               status;
+    uint32_t                   group_id;
+    sx_trap_group_attributes_t trap_group_attributes;
 
     SX_LOG_ENTER();
 
-    /* Group ID equals prio */
     if (SAI_STATUS_SUCCESS !=
-        (status = mlnx_object_to_type(key->object_id, SAI_OBJECT_TYPE_TRAP_GROUP, &value->u32, NULL))) {
+        (status = mlnx_object_to_type(key->object_id, SAI_OBJECT_TYPE_TRAP_GROUP, &group_id, NULL))) {
         SX_LOG_EXIT();
         return status;
     }
+
+    if (SAI_STATUS_SUCCESS != (status = sx_api_host_ifc_trap_group_get(gh_sdk, DEFAULT_ETH_SWID,
+                                                                       group_id, &trap_group_attributes))) {
+        SX_LOG_ERR("Failed to sx_api_host_ifc_trap_group_get %s\n", SX_STATUS_MSG(status));
+        return sdk_to_sai(status);
+    }
+
+    value->u32 = trap_group_attributes.prio;
 
     SX_LOG_EXIT();
     return SAI_STATUS_SUCCESS;
 }
 
-sai_status_t mlnx_trap_group_policer_get(_In_ const sai_object_key_t   *key,
-                                         _Inout_ sai_attribute_value_t *value,
-                                         _In_ uint32_t                  attr_index,
-                                         _Inout_ vendor_cache_t        *cache,
-                                         void                          *arg)
+static sai_status_t mlnx_trap_group_policer_get(_In_ const sai_object_key_t   *key,
+                                                _Inout_ sai_attribute_value_t *value,
+                                                _In_ uint32_t                  attr_index,
+                                                _Inout_ vendor_cache_t        *cache,
+                                                void                          *arg)
 {
     sai_status_t    sai_status;
     sx_status_t     sx_status;
@@ -1019,9 +1032,9 @@ sai_status_t mlnx_trap_group_policer_get(_In_ const sai_object_key_t   *key,
     return SAI_STATUS_SUCCESS;
 }
 
-sai_status_t mlnx_trap_group_policer_set(_In_ const sai_object_key_t      *key,
-                                         _In_ const sai_attribute_value_t *value,
-                                         void                             *arg)
+static sai_status_t mlnx_trap_group_policer_set(_In_ const sai_object_key_t      *key,
+                                                _In_ const sai_attribute_value_t *value,
+                                                void                             *arg)
 {
     sai_status_t sai_status;
 
@@ -1032,7 +1045,7 @@ sai_status_t mlnx_trap_group_policer_set(_In_ const sai_object_key_t      *key,
     return sai_status;
 }
 
-sai_status_t mlnx_trap_group_policer_set_internal(_In_ sai_object_id_t trap_id, _In_ sai_object_id_t policer_id)
+static sai_status_t mlnx_trap_group_policer_set_internal(_In_ sai_object_id_t trap_id, _In_ sai_object_id_t policer_id)
 {
     sai_status_t     sai_status;
     sai_object_key_t key = { .object_id = trap_id };
@@ -1066,7 +1079,6 @@ sai_status_t mlnx_trap_group_policer_set_internal(_In_ sai_object_id_t trap_id, 
     SX_LOG_EXIT();
     return SAI_STATUS_SUCCESS;
 }
-
 
 sai_status_t mlnx_sai_unbind_policer_from_trap_group(_In_ sai_object_id_t sai_trap_group_id)
 {
@@ -1134,13 +1146,13 @@ static void trap_group_key_to_str(_In_ sai_object_id_t group_id, _Out_ char *key
     }
 }
 
-sai_status_t mlnx_check_trap_group_prio(uint32_t prio, uint32_t prio_index)
+static sai_status_t mlnx_check_trap_group_prio(uint32_t prio, uint32_t prio_index)
 {
-    if (prio > SX_TRAP_PRIORITY_HIGH) {
+    if ((prio > g_resource_limits.trap_group_priority_max) || (prio < g_resource_limits.trap_group_priority_min)) {
         SX_LOG_ERR("Trap group priority %u out of range (%u,%u)\n",
                    prio,
-                   SX_TRAP_PRIORITY_BEST_EFFORT,
-                   SX_TRAP_PRIORITY_HIGH);
+                   g_resource_limits.trap_group_priority_min,
+                   g_resource_limits.trap_group_priority_max);
         return SAI_STATUS_INVALID_ATTR_VALUE_0 + prio_index;
     }
 
@@ -1160,9 +1172,9 @@ sai_status_t mlnx_check_trap_group_prio(uint32_t prio, uint32_t prio_index)
  *    SAI_STATUS_SUCCESS on success
  *    Failure status code on error
  */
-sai_status_t mlnx_create_hostif_trap_group(_Out_ sai_object_id_t      *hostif_trap_group_id,
-                                           _In_ uint32_t               attr_count,
-                                           _In_ const sai_attribute_t *attr_list)
+static sai_status_t mlnx_create_hostif_trap_group(_Out_ sai_object_id_t      *hostif_trap_group_id,
+                                                  _In_ uint32_t               attr_count,
+                                                  _In_ const sai_attribute_t *attr_list)
 {
     sai_status_t                 status;
     const sai_attribute_value_t *prio;
@@ -1172,7 +1184,7 @@ sai_status_t mlnx_create_hostif_trap_group(_Out_ sai_object_id_t      *hostif_tr
     sx_trap_group_attributes_t   trap_group_attributes;
     uint32_t                     policer_attr_index = 0;
     const sai_attribute_value_t *policer_id_attr    = NULL;
-    mlnx_policer_bind_params     bind_params;
+    uint32_t                     group_id;
 
     SX_LOG_ENTER();
 
@@ -1204,8 +1216,21 @@ sai_status_t mlnx_create_hostif_trap_group(_Out_ sai_object_id_t      *hostif_tr
     trap_group_attributes.truncate_size = 0;
     trap_group_attributes.prio          = prio->u32;
 
+    cl_plock_excl_acquire(&g_sai_db_ptr->p_lock);
+    for (group_id = 0; group_id < MAX_TRAP_GROUPS; group_id++) {
+        if (!g_sai_db_ptr->trap_group_valid[group_id]) {
+            g_sai_db_ptr->trap_group_valid[group_id] = true;
+            break;
+        }
+    }
+    cl_plock_release(&g_sai_db_ptr->p_lock);
+    if (MAX_TRAP_GROUPS == group_id) {
+        SX_LOG_ERR("All trap groups are already used\n");
+        return SAI_STATUS_INSUFFICIENT_RESOURCES;
+    }
+
     if (SAI_STATUS_SUCCESS != (status = sx_api_host_ifc_trap_group_set(gh_sdk, DEFAULT_ETH_SWID,
-                                                                       prio->u32, &trap_group_attributes))) {
+                                                                       group_id, &trap_group_attributes))) {
         SX_LOG_ERR("Failed to sx_api_host_ifc_trap_group_set %s\n", SX_STATUS_MSG(status));
         return sdk_to_sai(status);
     }
@@ -1213,7 +1238,7 @@ sai_status_t mlnx_create_hostif_trap_group(_Out_ sai_object_id_t      *hostif_tr
     /* TODO : handle queue */
 
     if (SAI_STATUS_SUCCESS !=
-        (status = mlnx_create_object(SAI_OBJECT_TYPE_TRAP_GROUP, prio->u32, NULL, hostif_trap_group_id))) {
+        (status = mlnx_create_object(SAI_OBJECT_TYPE_TRAP_GROUP, group_id, NULL, hostif_trap_group_id))) {
         SX_LOG_EXIT();
         return status;
     }
@@ -1224,9 +1249,8 @@ sai_status_t mlnx_create_hostif_trap_group(_Out_ sai_object_id_t      *hostif_tr
         find_attrib_in_list(attr_count, attr_list, SAI_HOSTIF_TRAP_GROUP_ATTR_POLICER, &policer_id_attr,
                             &policer_attr_index)) {
         if (SAI_NULL_OBJECT_ID != policer_id_attr->oid) {
-            bind_params.trap_group_bind_params.attr_prio_value.u32 = prio->u32;
             if (SAI_STATUS_SUCCESS !=
-                (status = mlnx_sai_bind_policer(*hostif_trap_group_id, policer_id_attr->oid, &bind_params))) {
+                (status = mlnx_sai_bind_policer(*hostif_trap_group_id, policer_id_attr->oid, NULL))) {
                 SX_LOG_ERR("Failed to bind. trap_group id:0x%" PRIx64 ". sai policer object_id:0x%" PRIx64 "\n",
                            *hostif_trap_group_id,
                            policer_id_attr->oid);
@@ -1255,19 +1279,44 @@ sai_status_t mlnx_create_hostif_trap_group(_Out_ sai_object_id_t      *hostif_tr
  *    SAI_STATUS_SUCCESS on success
  *    Failure status code on error
  */
-sai_status_t mlnx_remove_hostif_trap_group(_In_ sai_object_id_t hostif_trap_group_id)
+static sai_status_t mlnx_remove_hostif_trap_group(_In_ sai_object_id_t hostif_trap_group_id)
 {
-    char key_str[MAX_KEY_STR_LEN];
+    char         key_str[MAX_KEY_STR_LEN];
+    uint32_t     group_id;
+    sai_status_t status;
 
     SX_LOG_ENTER();
 
     trap_group_key_to_str(hostif_trap_group_id, key_str);
     SX_LOG_NTC("Remove trap group %s\n", key_str);
 
-    /* Nothing to do */
+    if (SAI_STATUS_SUCCESS !=
+        (status = mlnx_object_to_type(hostif_trap_group_id, SAI_OBJECT_TYPE_TRAP_GROUP, &group_id, NULL))) {
+        SX_LOG_EXIT();
+        return status;
+    }
+
+    if (DEFAULT_TRAP_GROUP_ID == group_id) {
+        SX_LOG_ERR("Can't delete the default trap group\n");
+        return SAI_STATUS_OBJECT_IN_USE;
+    }
+
+    if (group_id >= MAX_TRAP_GROUPS) {
+        SX_LOG_ERR("Invalid group id %u\n", group_id);
+        return SAI_STATUS_INVALID_PARAMETER;
+    }
+
+    cl_plock_excl_acquire(&g_sai_db_ptr->p_lock);
+    if (false == g_sai_db_ptr->trap_group_valid[group_id]) {
+        SX_LOG_ERR("Invalid group id %u\n", group_id);
+        status = SAI_STATUS_INVALID_PARAMETER;
+    } else {
+        g_sai_db_ptr->trap_group_valid[group_id] = false;
+    }
+    cl_plock_release(&g_sai_db_ptr->p_lock);
 
     SX_LOG_EXIT();
-    return SAI_STATUS_SUCCESS;
+    return status;
 }
 
 /*
@@ -1282,8 +1331,8 @@ sai_status_t mlnx_remove_hostif_trap_group(_In_ sai_object_id_t hostif_trap_grou
  *    SAI_STATUS_SUCCESS on success
  *    Failure status code on error
  */
-sai_status_t mlnx_set_hostif_trap_group_attribute(_In_ sai_object_id_t        hostif_trap_group_id,
-                                                  _In_ const sai_attribute_t *attr)
+static sai_status_t mlnx_set_hostif_trap_group_attribute(_In_ sai_object_id_t        hostif_trap_group_id,
+                                                         _In_ const sai_attribute_t *attr)
 {
     const sai_object_key_t key = { .object_id = hostif_trap_group_id };
     char                   key_str[MAX_KEY_STR_LEN];
@@ -1308,9 +1357,9 @@ sai_status_t mlnx_set_hostif_trap_group_attribute(_In_ sai_object_id_t        ho
  *    SAI_STATUS_SUCCESS on success
  *    Failure status code on error
  */
-sai_status_t mlnx_get_hostif_trap_group_attribute(_In_ sai_object_id_t     hostif_trap_group_id,
-                                                  _In_ uint32_t            attr_count,
-                                                  _Inout_ sai_attribute_t *attr_list)
+static sai_status_t mlnx_get_hostif_trap_group_attribute(_In_ sai_object_id_t     hostif_trap_group_id,
+                                                         _In_ uint32_t            attr_count,
+                                                         _Inout_ sai_attribute_t *attr_list)
 {
     const sai_object_key_t key = { .object_id = hostif_trap_group_id };
     char                   key_str[MAX_KEY_STR_LEN];
@@ -1362,7 +1411,8 @@ static void user_defined_trap_key_to_str(_In_ sai_hostif_user_defined_trap_id_t 
  *    SAI_STATUS_SUCCESS on success
  *    Failure status code on error
  */
-sai_status_t mlnx_set_hostif_trap_attribute(_In_ sai_hostif_trap_id_t hostif_trapid, _In_ const sai_attribute_t *attr)
+static sai_status_t mlnx_set_hostif_trap_attribute(_In_ sai_hostif_trap_id_t   hostif_trapid,
+                                                   _In_ const sai_attribute_t *attr)
 {
     const sai_object_key_t key = { .trap_id = hostif_trapid };
     char                   key_str[MAX_KEY_STR_LEN];
@@ -1386,9 +1436,9 @@ sai_status_t mlnx_set_hostif_trap_attribute(_In_ sai_hostif_trap_id_t hostif_tra
  *    SAI_STATUS_SUCCESS on success
  *    Failure status code on error
  */
-sai_status_t mlnx_get_hostif_trap_attribute(_In_ sai_hostif_trap_id_t hostif_trapid,
-                                            _In_ uint32_t             attr_count,
-                                            _Inout_ sai_attribute_t  *attr_list)
+static sai_status_t mlnx_get_hostif_trap_attribute(_In_ sai_hostif_trap_id_t hostif_trapid,
+                                                   _In_ uint32_t             attr_count,
+                                                   _Inout_ sai_attribute_t  *attr_list)
 {
     const sai_object_key_t key = { .trap_id = hostif_trapid };
     char                   key_str[MAX_KEY_STR_LEN];
@@ -1416,7 +1466,7 @@ sai_status_t mlnx_get_hostif_trap_attribute(_In_ sai_hostif_trap_id_t hostif_tra
  *    SAI_STATUS_SUCCESS on success
  *    Failure status code on error
  */
-sai_status_t mlnx_set_hostif_user_defined_trap_attribute(
+static sai_status_t mlnx_set_hostif_user_defined_trap_attribute(
     _In_ sai_hostif_user_defined_trap_id_t hostif_user_defined_trapid,
     _In_ const sai_attribute_t            *attr)
 {
@@ -1442,7 +1492,7 @@ sai_status_t mlnx_set_hostif_user_defined_trap_attribute(
  *    SAI_STATUS_SUCCESS on success
  *    Failure status code on error
  */
-sai_status_t mlnx_get_hostif_user_defined_trap_attribute(
+static sai_status_t mlnx_get_hostif_user_defined_trap_attribute(
     _In_ sai_hostif_user_defined_trap_id_t hostif_user_defined_trapid,
     _In_ uint32_t                          attr_count,
     _Inout_ sai_attribute_t               *attr_list)
@@ -1485,7 +1535,7 @@ static sai_status_t mlnx_trap_record_get(_In_ uint32_t         trap_id,
     return SAI_STATUS_SUCCESS;
 }
 
-sai_status_t mlnx_check_trap_channel(sai_hostif_trap_channel_t channel, uint32_t channel_index)
+static sai_status_t mlnx_check_trap_channel(sai_hostif_trap_channel_t channel, uint32_t channel_index)
 {
     switch (channel) {
     case SAI_HOSTIF_TRAP_CHANNEL_FD:
@@ -1613,9 +1663,9 @@ out:
 }
 
 /* trap action [sai_packet_action_t] */
-sai_status_t mlnx_trap_action_set(_In_ const sai_object_key_t      *key,
-                                  _In_ const sai_attribute_value_t *value,
-                                  void                             *arg)
+static sai_status_t mlnx_trap_action_set(_In_ const sai_object_key_t      *key,
+                                         _In_ const sai_attribute_value_t *value,
+                                         void                             *arg)
 {
     const sai_hostif_trap_id_t trap_id = key->trap_id;
     sai_status_t               status;
@@ -1647,11 +1697,11 @@ out:
 }
 
 /* trap action [sai_packet_action_t] */
-sai_status_t mlnx_trap_action_get(_In_ const sai_object_key_t   *key,
-                                  _Inout_ sai_attribute_value_t *value,
-                                  _In_ uint32_t                  attr_index,
-                                  _Inout_ vendor_cache_t        *cache,
-                                  void                          *arg)
+static sai_status_t mlnx_trap_action_get(_In_ const sai_object_key_t   *key,
+                                         _Inout_ sai_attribute_value_t *value,
+                                         _In_ uint32_t                  attr_index,
+                                         _Inout_ vendor_cache_t        *cache,
+                                         void                          *arg)
 {
     const sai_hostif_trap_id_t trap_id = key->trap_id;
     sai_status_t               status;
@@ -1670,9 +1720,9 @@ sai_status_t mlnx_trap_action_get(_In_ const sai_object_key_t   *key,
 }
 
 /* trap-group ID for the trap [sai_object_id_t] */
-sai_status_t mlnx_trap_group_set(_In_ const sai_object_key_t      *key,
-                                 _In_ const sai_attribute_value_t *value,
-                                 void                             *arg)
+static sai_status_t mlnx_trap_group_set(_In_ const sai_object_key_t      *key,
+                                        _In_ const sai_attribute_value_t *value,
+                                        void                             *arg)
 {
     const sai_hostif_trap_id_t trap_id = key->trap_id;
     sai_status_t               status;
@@ -1702,11 +1752,11 @@ out:
 }
 
 /* trap-group ID for the trap [sai_object_id_t] */
-sai_status_t mlnx_trap_group_get(_In_ const sai_object_key_t   *key,
-                                 _Inout_ sai_attribute_value_t *value,
-                                 _In_ uint32_t                  attr_index,
-                                 _Inout_ vendor_cache_t        *cache,
-                                 void                          *arg)
+static sai_status_t mlnx_trap_group_get(_In_ const sai_object_key_t   *key,
+                                        _Inout_ sai_attribute_value_t *value,
+                                        _In_ uint32_t                  attr_index,
+                                        _Inout_ vendor_cache_t        *cache,
+                                        void                          *arg)
 {
     const sai_hostif_trap_id_t trap_id = key->trap_id;
     sai_status_t               status;
@@ -1725,9 +1775,9 @@ sai_status_t mlnx_trap_group_get(_In_ const sai_object_key_t   *key,
 }
 
 /* trap channel to use [sai_hostif_trap_channel_t] */
-sai_status_t mlnx_trap_channel_set(_In_ const sai_object_key_t      *key,
-                                   _In_ const sai_attribute_value_t *value,
-                                   void                             *arg)
+static sai_status_t mlnx_trap_channel_set(_In_ const sai_object_key_t      *key,
+                                          _In_ const sai_attribute_value_t *value,
+                                          void                             *arg)
 {
     const sai_hostif_trap_id_t trap_id = key->trap_id;
     sai_status_t               status;
@@ -1762,11 +1812,11 @@ sai_status_t mlnx_trap_channel_set(_In_ const sai_object_key_t      *key,
 }
 
 /* trap channel to use [sai_hostif_trap_channel_t] */
-sai_status_t mlnx_trap_channel_get(_In_ const sai_object_key_t   *key,
-                                   _Inout_ sai_attribute_value_t *value,
-                                   _In_ uint32_t                  attr_index,
-                                   _Inout_ vendor_cache_t        *cache,
-                                   void                          *arg)
+static sai_status_t mlnx_trap_channel_get(_In_ const sai_object_key_t   *key,
+                                          _Inout_ sai_attribute_value_t *value,
+                                          _In_ uint32_t                  attr_index,
+                                          _Inout_ vendor_cache_t        *cache,
+                                          void                          *arg)
 {
     const uint32_t trap_id = key->trap_id;
     sai_status_t   status;
@@ -1787,9 +1837,9 @@ sai_status_t mlnx_trap_channel_get(_In_ const sai_object_key_t   *key,
 }
 
 /* file descriptor [sai_object_id_t] */
-sai_status_t mlnx_trap_fd_set(_In_ const sai_object_key_t      *key,
-                              _In_ const sai_attribute_value_t *value,
-                              void                             *arg)
+static sai_status_t mlnx_trap_fd_set(_In_ const sai_object_key_t      *key,
+                                     _In_ const sai_attribute_value_t *value,
+                                     void                             *arg)
 {
     const uint32_t trap_id = key->trap_id;
     sai_status_t   status;
@@ -1823,11 +1873,11 @@ sai_status_t mlnx_trap_fd_set(_In_ const sai_object_key_t      *key,
 }
 
 /* file descriptor [sai_object_id_t] */
-sai_status_t mlnx_trap_fd_get(_In_ const sai_object_key_t   *key,
-                              _Inout_ sai_attribute_value_t *value,
-                              _In_ uint32_t                  attr_index,
-                              _Inout_ vendor_cache_t        *cache,
-                              void                          *arg)
+static sai_status_t mlnx_trap_fd_get(_In_ const sai_object_key_t   *key,
+                                     _Inout_ sai_attribute_value_t *value,
+                                     _In_ uint32_t                  attr_index,
+                                     _Inout_ vendor_cache_t        *cache,
+                                     void                          *arg)
 {
     const sai_hostif_trap_id_t trap_id = key->trap_id;
     sai_status_t               status;
@@ -1866,11 +1916,11 @@ sai_status_t mlnx_trap_fd_get(_In_ const sai_object_key_t   *key,
  *    will be filled with required count.
  *    Failure status code on error
  */
-sai_status_t mlnx_recv_hostif_packet(_In_ sai_object_id_t   hif_id,
-                                     _Out_ void            *buffer,
-                                     _Inout_ sai_size_t    *buffer_size,
-                                     _Inout_ uint32_t      *attr_count,
-                                     _Out_ sai_attribute_t *attr_list)
+static sai_status_t mlnx_recv_hostif_packet(_In_ sai_object_id_t   hif_id,
+                                            _Out_ void            *buffer,
+                                            _Inout_ sai_size_t    *buffer_size,
+                                            _Inout_ uint32_t      *attr_count,
+                                            _Out_ sai_attribute_t *attr_list)
 {
     sai_status_t         status;
     uint32_t             hif_data;
@@ -1918,9 +1968,9 @@ sai_status_t mlnx_recv_hostif_packet(_In_ sai_object_id_t   hif_id,
     *buffer_size = packet_size;
 
     *attr_count     = RECV_ATTRIBS_NUM;
-    attr_list[0].id = SAI_HOSTIF_PACKET_TRAP_ID;
-    attr_list[1].id = SAI_HOSTIF_PACKET_INGRESS_PORT;
-    attr_list[2].id = SAI_HOSTIF_PACKET_INGRESS_LAG;
+    attr_list[0].id = SAI_HOSTIF_PACKET_ATTR_TRAP_ID;
+    attr_list[1].id = SAI_HOSTIF_PACKET_ATTR_INGRESS_PORT;
+    attr_list[2].id = SAI_HOSTIF_PACKET_ATTR_INGRESS_LAG;
 
     if (SX_INVALID_PORT == receive_info.source_log_port) {
         SX_LOG_ERR("sx_api_host_ifc_recv returned unknown port\n");
@@ -1968,11 +2018,11 @@ sai_status_t mlnx_recv_hostif_packet(_In_ sai_object_id_t   hif_id,
  *    SAI_STATUS_SUCCESS on success
  *    Failure status code on error
  */
-sai_status_t mlnx_send_hostif_packet(_In_ sai_object_id_t  hif_id,
-                                     _In_ void            *buffer,
-                                     _In_ sai_size_t       buffer_size,
-                                     _In_ uint32_t         attr_count,
-                                     _In_ sai_attribute_t *attr_list)
+static sai_status_t mlnx_send_hostif_packet(_In_ sai_object_id_t  hif_id,
+                                            _In_ void            *buffer,
+                                            _In_ sai_size_t       buffer_size,
+                                            _In_ uint32_t         attr_count,
+                                            _In_ sai_attribute_t *attr_list)
 {
     sai_status_t                 status;
     const sai_attribute_value_t *type, *port;
@@ -1996,12 +2046,12 @@ sai_status_t mlnx_send_hostif_packet(_In_ sai_object_id_t  hif_id,
     SX_LOG_NTC("send packet, %s\n", list_str);
 
     assert(SAI_STATUS_SUCCESS ==
-           find_attrib_in_list(attr_count, attr_list, SAI_HOSTIF_PACKET_TX_TYPE, &type, &type_index));
+           find_attrib_in_list(attr_count, attr_list, SAI_HOSTIF_PACKET_ATTR_TX_TYPE, &type, &type_index));
 
     if (SAI_HOSTIF_TX_TYPE_PIPELINE_BYPASS == type->s32) {
         if (SAI_STATUS_SUCCESS !=
             (status =
-                 find_attrib_in_list(attr_count, attr_list, SAI_HOSTIF_PACKET_EGRESS_PORT_OR_LAG, &port,
+            find_attrib_in_list(attr_count, attr_list, SAI_HOSTIF_PACKET_ATTR_EGRESS_PORT_OR_LAG, &port,
                                      &port_index))) {
             SX_LOG_ERR("Missing mandatory attribute port or lag for bypass TX\n");
             return SAI_STATUS_MANDATORY_ATTRIBUTE_MISSING;
@@ -2021,7 +2071,7 @@ sai_status_t mlnx_send_hostif_packet(_In_ sai_object_id_t  hif_id,
     } else if (SAI_HOSTIF_TX_TYPE_PIPELINE_LOOKUP == type->s32) {
         if (SAI_STATUS_ITEM_NOT_FOUND !=
             (status =
-                 find_attrib_in_list(attr_count, attr_list, SAI_HOSTIF_PACKET_EGRESS_PORT_OR_LAG, &port,
+            find_attrib_in_list(attr_count, attr_list, SAI_HOSTIF_PACKET_ATTR_EGRESS_PORT_OR_LAG, &port,
                                      &port_index))) {
             SX_LOG_ERR("Invalid attribute port or lag for lookup TX\n");
             return SAI_STATUS_INVALID_ATTRIBUTE_0 + port_index;
@@ -2083,7 +2133,7 @@ sai_status_t mlnx_host_interface_log_set(sx_verbosity_level_t level)
     }
 }
 
-const sai_hostif_api_t host_interface_api = {
+const sai_hostif_api_t mlnx_host_interface_api = {
     mlnx_create_host_interface,
     mlnx_remove_host_interface,
     mlnx_set_host_interface_attribute,

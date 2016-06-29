@@ -25,212 +25,211 @@
 
 static sx_verbosity_level_t LOG_VAR_NAME(__MODULE__) = SX_VERBOSITY_LEVEL_WARNING;
 sai_status_t find_port_in_db(sai_object_id_t port, uint32_t *index);
-
-sai_status_t mlnx_port_state_set(_In_ const sai_object_key_t      *key,
-                                 _In_ const sai_attribute_value_t *value,
-                                 void                             *arg);
-sai_status_t mlnx_port_pvid_set(_In_ const sai_object_key_t      *key,
-                                _In_ const sai_attribute_value_t *value,
-                                void                             *arg);
-sai_status_t mlnx_port_default_vlan_prio_set(_In_ const sai_object_key_t      *key,
-                                             _In_ const sai_attribute_value_t *value,
-                                             void                             *arg);
-sai_status_t mlnx_port_ingress_filter_set(_In_ const sai_object_key_t      *key,
-                                          _In_ const sai_attribute_value_t *value,
-                                          void                             *arg);
-sai_status_t mlnx_port_drop_tags_set(_In_ const sai_object_key_t      *key,
-                                     _In_ const sai_attribute_value_t *value,
-                                     void                             *arg);
-sai_status_t mlnx_port_internal_loopback_set(_In_ const sai_object_key_t      *key,
-                                             _In_ const sai_attribute_value_t *value,
-                                             void                             *arg);
-sai_status_t mlnx_port_fdb_learning_set(_In_ const sai_object_key_t      *key,
+static sai_status_t mlnx_port_tc_get(_In_ const sai_object_id_t port, _Out_ uint8_t *tc);
+static sai_status_t mlnx_port_state_set(_In_ const sai_object_key_t      *key,
                                         _In_ const sai_attribute_value_t *value,
                                         void                             *arg);
-sai_status_t mlnx_port_mtu_set(_In_ const sai_object_key_t      *key,
-                               _In_ const sai_attribute_value_t *value,
-                               void                             *arg);
-sai_status_t mlnx_port_speed_set(_In_ const sai_object_key_t      *key,
-                                 _In_ const sai_attribute_value_t *value,
-                                 void                             *arg);
-sai_status_t mlnx_port_auto_negotiation_set(_In_ const sai_object_key_t      *key,
+static sai_status_t mlnx_port_pvid_set(_In_ const sai_object_key_t      *key,
+                                       _In_ const sai_attribute_value_t *value,
+                                       void                             *arg);
+static sai_status_t mlnx_port_default_vlan_prio_set(_In_ const sai_object_key_t      *key,
+                                                    _In_ const sai_attribute_value_t *value,
+                                                    void                             *arg);
+static sai_status_t mlnx_port_ingress_filter_set(_In_ const sai_object_key_t      *key,
+                                                 _In_ const sai_attribute_value_t *value,
+                                                 void                             *arg);
+static sai_status_t mlnx_port_drop_tags_set(_In_ const sai_object_key_t      *key,
                                             _In_ const sai_attribute_value_t *value,
                                             void                             *arg);
-sai_status_t mlnx_port_wred_set(_In_ const sai_object_key_t      *key,
-                                _In_ const sai_attribute_value_t *value,
-                                void                             *arg);
-sai_status_t mlnx_port_type_get(_In_ const sai_object_key_t   *key,
-                                _Inout_ sai_attribute_value_t *value,
-                                _In_ uint32_t                  attr_index,
-                                _Inout_ vendor_cache_t        *cache,
-                                void                          *arg);
-sai_status_t mlnx_port_state_get(_In_ const sai_object_key_t   *key,
-                                 _Inout_ sai_attribute_value_t *value,
-                                 _In_ uint32_t                  attr_index,
-                                 _Inout_ vendor_cache_t        *cache,
-                                 void                          *arg);
-sai_status_t mlnx_port_hw_lanes_get(_In_ const sai_object_key_t   *key,
-                                    _Inout_ sai_attribute_value_t *value,
-                                    _In_ uint32_t                  attr_index,
-                                    _Inout_ vendor_cache_t        *cache,
-                                    void                          *arg);
-sai_status_t mlnx_port_supported_breakout_get(_In_ const sai_object_key_t   *key,
-                                              _Inout_ sai_attribute_value_t *value,
-                                              _In_ uint32_t                  attr_index,
-                                              _Inout_ vendor_cache_t        *cache,
-                                              void                          *arg);
-sai_status_t mlnx_port_current_breakout_get(_In_ const sai_object_key_t   *key,
-                                            _Inout_ sai_attribute_value_t *value,
-                                            _In_ uint32_t                  attr_index,
-                                            _Inout_ vendor_cache_t        *cache,
-                                            void                          *arg);
-sai_status_t mlnx_port_supported_speed_get(_In_ const sai_object_key_t   *key,
-                                           _Inout_ sai_attribute_value_t *value,
-                                           _In_ uint32_t                  attr_index,
-                                           _Inout_ vendor_cache_t        *cache,
-                                           void                          *arg);
-sai_status_t mlnx_port_number_of_priority_groups_get(_In_ const sai_object_key_t   *key,
-                                           _Inout_ sai_attribute_value_t *value,
-                                           _In_ uint32_t                  attr_index,
-                                           _Inout_ vendor_cache_t        *cache,
-                                           void                          *arg);
-
-sai_status_t mlnx_port_priority_group_list_get(_In_ const sai_object_key_t   *key,
-                                           _Inout_ sai_attribute_value_t *value,
-                                           _In_ uint32_t                  attr_index,
-                                           _Inout_ vendor_cache_t        *cache,
-                                           void                          *arg);
-sai_status_t mlnx_port_speed_get(_In_ const sai_object_key_t   *key,
-                                 _Inout_ sai_attribute_value_t *value,
-                                 _In_ uint32_t                  attr_index,
-                                 _Inout_ vendor_cache_t        *cache,
-                                 void                          *arg);
-sai_status_t mlnx_port_duplex_get(_In_ const sai_object_key_t   *key,
-                                  _Inout_ sai_attribute_value_t *value,
-                                  _In_ uint32_t                  attr_index,
-                                  _Inout_ vendor_cache_t        *cache,
-                                  void                          *arg);
-sai_status_t mlnx_port_auto_negotiation_get(_In_ const sai_object_key_t   *key,
-                                            _Inout_ sai_attribute_value_t *value,
-                                            _In_ uint32_t                  attr_index,
-                                            _Inout_ vendor_cache_t        *cache,
-                                            void                          *arg);
-sai_status_t mlnx_port_pvid_get(_In_ const sai_object_key_t   *key,
-                                _Inout_ sai_attribute_value_t *value,
-                                _In_ uint32_t                  attr_index,
-                                _Inout_ vendor_cache_t        *cache,
-                                void                          *arg);
-sai_status_t mlnx_port_default_vlan_prio_get(_In_ const sai_object_key_t   *key,
-                                             _Inout_ sai_attribute_value_t *value,
-                                             _In_ uint32_t                  attr_index,
-                                             _Inout_ vendor_cache_t        *cache,
-                                             void                          *arg);
-sai_status_t mlnx_port_ingress_filter_get(_In_ const sai_object_key_t   *key,
-                                          _Inout_ sai_attribute_value_t *value,
-                                          _In_ uint32_t                  attr_index,
-                                          _Inout_ vendor_cache_t        *cache,
-                                          void                          *arg);
-sai_status_t mlnx_port_drop_tags_get(_In_ const sai_object_key_t   *key,
-                                     _Inout_ sai_attribute_value_t *value,
-                                     _In_ uint32_t                  attr_index,
-                                     _Inout_ vendor_cache_t        *cache,
-                                     void                          *arg);
-sai_status_t mlnx_port_internal_loopback_get(_In_ const sai_object_key_t   *key,
-                                             _Inout_ sai_attribute_value_t *value,
-                                             _In_ uint32_t                  attr_index,
-                                             _Inout_ vendor_cache_t        *cache,
-                                             void                          *arg);
-sai_status_t mlnx_port_fdb_learning_get(_In_ const sai_object_key_t   *key,
+static sai_status_t mlnx_port_internal_loopback_set(_In_ const sai_object_key_t      *key,
+                                                    _In_ const sai_attribute_value_t *value,
+                                                    void                             *arg);
+static sai_status_t mlnx_port_fdb_learning_set(_In_ const sai_object_key_t      *key,
+                                               _In_ const sai_attribute_value_t *value,
+                                               void                             *arg);
+static sai_status_t mlnx_port_mtu_set(_In_ const sai_object_key_t      *key,
+                                      _In_ const sai_attribute_value_t *value,
+                                      void                             *arg);
+static sai_status_t mlnx_port_global_flow_ctrl_set(_In_ const sai_object_key_t      *key,
+                                                   _In_ const sai_attribute_value_t *value,
+                                                   void                             *arg);
+static sai_status_t mlnx_port_speed_set(_In_ const sai_object_key_t      *key,
+                                        _In_ const sai_attribute_value_t *value,
+                                        void                             *arg);
+static sai_status_t mlnx_port_auto_negotiation_set(_In_ const sai_object_key_t      *key,
+                                                   _In_ const sai_attribute_value_t *value,
+                                                   void                             *arg);
+static sai_status_t mlnx_port_wred_set(_In_ const sai_object_key_t      *key,
+                                       _In_ const sai_attribute_value_t *value,
+                                       void                             *arg);
+static sai_status_t mlnx_port_type_get(_In_ const sai_object_key_t   *key,
+                                       _Inout_ sai_attribute_value_t *value,
+                                       _In_ uint32_t                  attr_index,
+                                       _Inout_ vendor_cache_t        *cache,
+                                       void                          *arg);
+static sai_status_t mlnx_port_state_get(_In_ const sai_object_key_t   *key,
                                         _Inout_ sai_attribute_value_t *value,
                                         _In_ uint32_t                  attr_index,
                                         _Inout_ vendor_cache_t        *cache,
                                         void                          *arg);
-sai_status_t mlnx_port_mtu_get(_In_ const sai_object_key_t   *key,
-                               _Inout_ sai_attribute_value_t *value,
-                               _In_ uint32_t                  attr_index,
-                               _Inout_ vendor_cache_t        *cache,
-                               void                          *arg);
-
-sai_status_t mlnx_port_wred_get(_In_ const sai_object_key_t   *key,
-                                _Inout_ sai_attribute_value_t *value,
-                                _In_ uint32_t                  attr_index,
-                                _Inout_ vendor_cache_t        *cache,
-                                void                          *arg);
-
-sai_status_t mlnx_port_update_dscp_get(_In_ const sai_object_key_t   *key,
+static sai_status_t mlnx_port_hw_lanes_get(_In_ const sai_object_key_t   *key,
+                                           _Inout_ sai_attribute_value_t *value,
+                                           _In_ uint32_t                  attr_index,
+                                           _Inout_ vendor_cache_t        *cache,
+                                           void                          *arg);
+static sai_status_t mlnx_port_supported_breakout_get(_In_ const sai_object_key_t   *key,
+                                                     _Inout_ sai_attribute_value_t *value,
+                                                     _In_ uint32_t                  attr_index,
+                                                     _Inout_ vendor_cache_t        *cache,
+                                                     void                          *arg);
+static sai_status_t mlnx_port_current_breakout_get(_In_ const sai_object_key_t   *key,
+                                                   _Inout_ sai_attribute_value_t *value,
+                                                   _In_ uint32_t                  attr_index,
+                                                   _Inout_ vendor_cache_t        *cache,
+                                                   void                          *arg);
+static sai_status_t mlnx_port_supported_speed_get(_In_ const sai_object_key_t   *key,
+                                                  _Inout_ sai_attribute_value_t *value,
+                                                  _In_ uint32_t                  attr_index,
+                                                  _Inout_ vendor_cache_t        *cache,
+                                                  void                          *arg);
+static sai_status_t mlnx_port_number_of_priority_groups_get(_In_ const sai_object_key_t   *key,
+                                                            _Inout_ sai_attribute_value_t *value,
+                                                            _In_ uint32_t                  attr_index,
+                                                            _Inout_ vendor_cache_t        *cache,
+                                                            void                          *arg);
+static sai_status_t mlnx_port_priority_group_list_get(_In_ const sai_object_key_t   *key,
+                                                      _Inout_ sai_attribute_value_t *value,
+                                                      _In_ uint32_t                  attr_index,
+                                                      _Inout_ vendor_cache_t        *cache,
+                                                      void                          *arg);
+static sai_status_t mlnx_port_speed_get(_In_ const sai_object_key_t   *key,
+                                        _Inout_ sai_attribute_value_t *value,
+                                        _In_ uint32_t                  attr_index,
+                                        _Inout_ vendor_cache_t        *cache,
+                                        void                          *arg);
+static sai_status_t mlnx_port_duplex_get(_In_ const sai_object_key_t   *key,
+                                         _Inout_ sai_attribute_value_t *value,
+                                         _In_ uint32_t                  attr_index,
+                                         _Inout_ vendor_cache_t        *cache,
+                                         void                          *arg);
+static sai_status_t mlnx_port_auto_negotiation_get(_In_ const sai_object_key_t   *key,
+                                                   _Inout_ sai_attribute_value_t *value,
+                                                   _In_ uint32_t                  attr_index,
+                                                   _Inout_ vendor_cache_t        *cache,
+                                                   void                          *arg);
+static sai_status_t mlnx_port_pvid_get(_In_ const sai_object_key_t   *key,
                                        _Inout_ sai_attribute_value_t *value,
                                        _In_ uint32_t                  attr_index,
                                        _Inout_ vendor_cache_t        *cache,
                                        void                          *arg);
-
-sai_status_t mlnx_port_update_dscp_set(_In_ const sai_object_key_t      *key,
-                                       _In_ const sai_attribute_value_t *value,
-                                       void                             *arg);
-
-sai_status_t mlnx_port_qos_default_tc_get(_In_ const sai_object_key_t   *key,
-                                          _Inout_ sai_attribute_value_t *value,
-                                          _In_ uint32_t                  attr_index,
-                                          _Inout_ vendor_cache_t        *cache,
-                                          void                          *arg);
-
-sai_status_t mlnx_port_qos_default_tc_set(_In_ const sai_object_key_t      *key,
-                                          _In_ const sai_attribute_value_t *value,
-                                          void                             *arg);
-
-sai_status_t mlnx_port_qos_map_id_get(_In_ const sai_object_key_t   *key,
-                                      _Inout_ sai_attribute_value_t *value,
-                                      _In_ uint32_t                  attr_index,
-                                      _Inout_ vendor_cache_t        *cache,
-                                      void                          *arg);
-
-sai_status_t mlnx_port_qos_map_id_set(_In_ const sai_object_key_t      *key,
-                                      _In_ const sai_attribute_value_t *value,
-                                      void                             *arg);
-
-sai_status_t mlnx_port_mirror_session_get(_In_ const sai_object_key_t   *key,
-                                          _Inout_ sai_attribute_value_t *value,
-                                          _In_ uint32_t                  attr_index,
-                                          _Inout_ vendor_cache_t        *cache,
-                                          void                          *arg);
-
-sai_status_t mlnx_port_mirror_session_set(_In_ const sai_object_key_t      *key,
-                                          _In_ const sai_attribute_value_t *value,
-                                          void                             *arg);
-
-sai_status_t mlnx_port_pfc_control_get(_In_ const sai_object_key_t   *key,
-                                       _Inout_ sai_attribute_value_t *value,
-                                       _In_ uint32_t                  attr_index,
-                                       _Inout_ vendor_cache_t        *cache,
-                                       void                          *arg);
-
-sai_status_t mlnx_port_pfc_control_set(_In_ const sai_object_key_t      *key,
-                                       _In_ const sai_attribute_value_t *value,
-                                       void                             *arg);
-
-sai_status_t mlnx_port_queue_num_get(_In_ const sai_object_key_t   *key,
-                                     _Inout_ sai_attribute_value_t *value,
-                                     _In_ uint32_t                  attr_index,
-                                     _Inout_ vendor_cache_t        *cache,
-                                     void                          *arg);
-
-sai_status_t mlnx_port_queue_list_get(_In_ const sai_object_key_t   *key,
-                                      _Inout_ sai_attribute_value_t *value,
-                                      _In_ uint32_t                  attr_index,
-                                      _Inout_ vendor_cache_t        *cache,
-                                      void                          *arg);
-
-sai_status_t mlnx_port_sched_groups_num_get(_In_ const sai_object_key_t   *key,
+static sai_status_t mlnx_port_default_vlan_prio_get(_In_ const sai_object_key_t   *key,
+                                                    _Inout_ sai_attribute_value_t *value,
+                                                    _In_ uint32_t                  attr_index,
+                                                    _Inout_ vendor_cache_t        *cache,
+                                                    void                          *arg);
+static sai_status_t mlnx_port_ingress_filter_get(_In_ const sai_object_key_t   *key,
+                                                 _Inout_ sai_attribute_value_t *value,
+                                                 _In_ uint32_t                  attr_index,
+                                                 _Inout_ vendor_cache_t        *cache,
+                                                 void                          *arg);
+static sai_status_t mlnx_port_drop_tags_get(_In_ const sai_object_key_t   *key,
                                             _Inout_ sai_attribute_value_t *value,
                                             _In_ uint32_t                  attr_index,
                                             _Inout_ vendor_cache_t        *cache,
                                             void                          *arg);
-
-sai_status_t mlnx_port_sched_groups_list_get(_In_ const sai_object_key_t   *key,
+static sai_status_t mlnx_port_internal_loopback_get(_In_ const sai_object_key_t   *key,
+                                                    _Inout_ sai_attribute_value_t *value,
+                                                    _In_ uint32_t                  attr_index,
+                                                    _Inout_ vendor_cache_t        *cache,
+                                                    void                          *arg);
+static sai_status_t mlnx_port_fdb_learning_get(_In_ const sai_object_key_t   *key,
+                                               _Inout_ sai_attribute_value_t *value,
+                                               _In_ uint32_t                  attr_index,
+                                               _Inout_ vendor_cache_t        *cache,
+                                               void                          *arg);
+static sai_status_t mlnx_port_mtu_get(_In_ const sai_object_key_t   *key,
+                                      _Inout_ sai_attribute_value_t *value,
+                                      _In_ uint32_t                  attr_index,
+                                      _Inout_ vendor_cache_t        *cache,
+                                      void                          *arg);
+static sai_status_t mlnx_port_global_flow_ctrl_get(_In_ const sai_object_key_t   *key,
+                                                   _Inout_ sai_attribute_value_t *value,
+                                                   _In_ uint32_t                  attr_index,
+                                                   _Inout_ vendor_cache_t        *cache,
+                                                   void                          *arg);
+static sai_status_t mlnx_port_wred_get(_In_ const sai_object_key_t   *key,
+                                       _Inout_ sai_attribute_value_t *value,
+                                       _In_ uint32_t                  attr_index,
+                                       _Inout_ vendor_cache_t        *cache,
+                                       void                          *arg);
+static sai_status_t mlnx_port_update_dscp_get(_In_ const sai_object_key_t   *key,
+                                              _Inout_ sai_attribute_value_t *value,
+                                              _In_ uint32_t                  attr_index,
+                                              _Inout_ vendor_cache_t        *cache,
+                                              void                          *arg);
+static sai_status_t mlnx_port_update_dscp_set(_In_ const sai_object_key_t      *key,
+                                              _In_ const sai_attribute_value_t *value,
+                                              void                             *arg);
+static sai_status_t mlnx_port_qos_default_tc_get(_In_ const sai_object_key_t   *key,
+                                                 _Inout_ sai_attribute_value_t *value,
+                                                 _In_ uint32_t                  attr_index,
+                                                 _Inout_ vendor_cache_t        *cache,
+                                                 void                          *arg);
+static sai_status_t mlnx_port_qos_default_tc_set(_In_ const sai_object_key_t      *key,
+                                                 _In_ const sai_attribute_value_t *value,
+                                                 void                             *arg);
+static sai_status_t mlnx_port_qos_map_id_get(_In_ const sai_object_key_t   *key,
                                              _Inout_ sai_attribute_value_t *value,
                                              _In_ uint32_t                  attr_index,
                                              _Inout_ vendor_cache_t        *cache,
                                              void                          *arg);
-
+static sai_status_t mlnx_port_qos_map_id_set(_In_ const sai_object_key_t      *key,
+                                             _In_ const sai_attribute_value_t *value,
+                                             void                             *arg);
+static sai_status_t mlnx_port_mirror_session_get(_In_ const sai_object_key_t   *key,
+                                                 _Inout_ sai_attribute_value_t *value,
+                                                 _In_ uint32_t                  attr_index,
+                                                 _Inout_ vendor_cache_t        *cache,
+                                                 void                          *arg);
+static sai_status_t mlnx_port_mirror_session_set(_In_ const sai_object_key_t      *key,
+                                                 _In_ const sai_attribute_value_t *value,
+                                                 void                             *arg);
+static sai_status_t mlnx_port_samplepacket_session_get(_In_ const sai_object_key_t   *key,
+                                                       _Inout_ sai_attribute_value_t *value,
+                                                       _In_ uint32_t                  attr_index,
+                                                       _Inout_ vendor_cache_t        *cache,
+                                                       void                          *arg);
+static sai_status_t mlnx_port_samplepacket_session_set(_In_ const sai_object_key_t      *key,
+                                                       _In_ const sai_attribute_value_t *value,
+                                                       void                             *arg);
+static sai_status_t mlnx_port_pfc_control_get(_In_ const sai_object_key_t   *key,
+                                              _Inout_ sai_attribute_value_t *value,
+                                              _In_ uint32_t                  attr_index,
+                                              _Inout_ vendor_cache_t        *cache,
+                                              void                          *arg);
+static sai_status_t mlnx_port_pfc_control_set(_In_ const sai_object_key_t      *key,
+                                              _In_ const sai_attribute_value_t *value,
+                                              void                             *arg);
+static sai_status_t mlnx_port_queue_num_get(_In_ const sai_object_key_t   *key,
+                                            _Inout_ sai_attribute_value_t *value,
+                                            _In_ uint32_t                  attr_index,
+                                            _Inout_ vendor_cache_t        *cache,
+                                            void                          *arg);
+static sai_status_t mlnx_port_queue_list_get(_In_ const sai_object_key_t   *key,
+                                             _Inout_ sai_attribute_value_t *value,
+                                             _In_ uint32_t                  attr_index,
+                                             _Inout_ vendor_cache_t        *cache,
+                                             void                          *arg);
+static sai_status_t mlnx_port_sched_groups_num_get(_In_ const sai_object_key_t   *key,
+                                                   _Inout_ sai_attribute_value_t *value,
+                                                   _In_ uint32_t                  attr_index,
+                                                   _Inout_ vendor_cache_t        *cache,
+                                                   void                          *arg);
+static sai_status_t mlnx_port_sched_groups_list_get(_In_ const sai_object_key_t   *key,
+                                                    _Inout_ sai_attribute_value_t *value,
+                                                    _In_ uint32_t                  attr_index,
+                                                    _Inout_ vendor_cache_t        *cache,
+                                                    void                          *arg);
 static sai_status_t mlnx_port_sched_get(_In_ const sai_object_key_t   *key,
                                         _Inout_ sai_attribute_value_t *value,
                                         _In_ uint32_t                  attr_index,
@@ -240,24 +239,21 @@ static sai_status_t mlnx_port_sched_set(_In_ const sai_object_key_t      *key,
                                         _In_ const sai_attribute_value_t *value,
                                         void                             *arg);
 static sai_status_t mlnx_port_ingress_buffer_profile_list_get(_In_ const sai_object_key_t   *key,
-                                        _Inout_ sai_attribute_value_t *value,
-                                        _In_ uint32_t                  attr_index,
-                                        _Inout_ vendor_cache_t        *cache,
-                                        void                          *arg);
-
+                                                              _Inout_ sai_attribute_value_t *value,
+                                                              _In_ uint32_t                  attr_index,
+                                                              _Inout_ vendor_cache_t        *cache,
+                                                              void                          *arg);
 static sai_status_t mlnx_port_ingress_buffer_profile_list_set(_In_ const sai_object_key_t      *key,
-                                        _In_ const sai_attribute_value_t *value,
-                                        void                             *arg);
-
+                                                              _In_ const sai_attribute_value_t *value,
+                                                              void                             *arg);
 static sai_status_t mlnx_port_egress_buffer_profile_list_get(_In_ const sai_object_key_t   *key,
-                                        _Inout_ sai_attribute_value_t *value,
-                                        _In_ uint32_t                  attr_index,
-                                        _Inout_ vendor_cache_t        *cache,
-                                        void                          *arg);
-
+                                                             _Inout_ sai_attribute_value_t *value,
+                                                             _In_ uint32_t                  attr_index,
+                                                             _Inout_ vendor_cache_t        *cache,
+                                                             void                          *arg);
 static sai_status_t mlnx_port_egress_buffer_profile_list_set(_In_ const sai_object_key_t      *key,
-                                        _In_ const sai_attribute_value_t *value,
-                                        void                             *arg);
+                                                             _In_ const sai_attribute_value_t *value,
+                                                             void                             *arg);
 static const sai_attribute_entry_t        port_attribs[] = {
     { SAI_PORT_ATTR_TYPE, false, false, false, true,
       "Port type", SAI_ATTR_VAL_TYPE_S32 },
@@ -493,10 +489,10 @@ static const sai_vendor_attribute_entry_t port_vendor_attribs[] = {
       NULL, NULL,
       NULL, NULL },
     { SAI_PORT_ATTR_GLOBAL_FLOW_CONTROL,
-      { false, false, false, false },
       { false, false, true, true },
-      NULL, NULL,
-      NULL, NULL },
+      { false, false, true, true },
+      mlnx_port_global_flow_ctrl_get, NULL,
+      mlnx_port_global_flow_ctrl_set, NULL },
     { SAI_PORT_ATTR_MAX_LEARNED_ADDRESSES,
       { false, false, false, false },
       { false, false, true, true },
@@ -518,15 +514,15 @@ static const sai_vendor_attribute_entry_t port_vendor_attribs[] = {
       mlnx_port_mirror_session_get, (void*)MIRROR_EGRESS_PORT,
       mlnx_port_mirror_session_set, (void*)MIRROR_EGRESS_PORT },
     { SAI_PORT_ATTR_INGRESS_SAMPLEPACKET_ENABLE,
-      { false, false, false, false },
       { false, false, true, true },
-      NULL, NULL,
-      NULL, NULL },
+      { false, false, true, true },
+      mlnx_port_samplepacket_session_get, (void*)SAMPLEPACKET_INGRESS_PORT,
+      mlnx_port_samplepacket_session_set, (void*)SAMPLEPACKET_INGRESS_PORT },
     { SAI_PORT_ATTR_EGRESS_SAMPLEPACKET_ENABLE,
       { false, false, false, false },
       { false, false, true, true },
-      NULL, NULL,
-      NULL, NULL },
+      mlnx_port_samplepacket_session_get, (void*)SAMPLEPACKET_EGRESS_PORT,
+      mlnx_port_samplepacket_session_set, (void*)SAMPLEPACKET_EGRESS_PORT },
     { SAI_PORT_ATTR_QOS_DEFAULT_TC,
       { false, false, true, true },
       { false, false, true, true },
@@ -620,18 +616,20 @@ static const sai_vendor_attribute_entry_t port_vendor_attribs[] = {
     { SAI_PORT_ATTR_QOS_INGRESS_BUFFER_PROFILE_LIST,
       { false, false, true, true },
       { false, false, true, true },
-        mlnx_port_ingress_buffer_profile_list_get, NULL,
-        mlnx_port_ingress_buffer_profile_list_set, NULL },
-        
+      mlnx_port_ingress_buffer_profile_list_get, NULL,
+      mlnx_port_ingress_buffer_profile_list_set, NULL },
+
     { SAI_PORT_ATTR_QOS_EGRESS_BUFFER_PROFILE_LIST,
       { false, false, true, true },
       { false, false, true, true },
-        mlnx_port_egress_buffer_profile_list_get, NULL,
-        mlnx_port_egress_buffer_profile_list_set, NULL },
+      mlnx_port_egress_buffer_profile_list_get, NULL,
+      mlnx_port_egress_buffer_profile_list_set, NULL },
 };
 
 /* Admin Mode [bool] */
-sai_status_t mlnx_port_state_set(_In_ const sai_object_key_t *key, _In_ const sai_attribute_value_t *value, void *arg)
+static sai_status_t mlnx_port_state_set(_In_ const sai_object_key_t      *key,
+                                        _In_ const sai_attribute_value_t *value,
+                                        void                             *arg)
 {
     sai_status_t     status;
     sx_port_log_id_t port_id;
@@ -656,17 +654,25 @@ sai_status_t mlnx_port_state_set(_In_ const sai_object_key_t *key, _In_ const sa
 /* Port VLAN ID [sai_vlan_id_t]
  * Untagged ingress frames are tagged with Port VLAN ID (PVID)
  */
-sai_status_t mlnx_port_pvid_set(_In_ const sai_object_key_t      *key,
-                                _In_ const sai_attribute_value_t *value,
-                                void                             *arg)
+static sai_status_t mlnx_port_pvid_set(_In_ const sai_object_key_t      *key,
+                                       _In_ const sai_attribute_value_t *value,
+                                       void                             *arg)
 {
     sai_status_t     status;
     sx_port_log_id_t port_id;
 
     SX_LOG_ENTER();
 
-    if (SAI_STATUS_SUCCESS != (status = mlnx_object_to_type(key->object_id, SAI_OBJECT_TYPE_PORT, &port_id, NULL))) {
-        return status;
+    if (SAI_OBJECT_TYPE_LAG == sai_object_type_query(key->object_id)) {
+        if (SAI_STATUS_SUCCESS !=
+            (status = mlnx_object_to_type(key->object_id, SAI_OBJECT_TYPE_LAG, &port_id, NULL))) {
+            return status;
+        }
+    } else {
+        if (SAI_STATUS_SUCCESS !=
+            (status = mlnx_object_to_type(key->object_id, SAI_OBJECT_TYPE_PORT, &port_id, NULL))) {
+            return status;
+        }
     }
 
     if (SX_STATUS_SUCCESS !=
@@ -681,9 +687,9 @@ sai_status_t mlnx_port_pvid_set(_In_ const sai_object_key_t      *key,
 
 /* Default VLAN Priority [uint8_t]
  *  (default to 0) */
-sai_status_t mlnx_port_default_vlan_prio_set(_In_ const sai_object_key_t      *key,
-                                             _In_ const sai_attribute_value_t *value,
-                                             void                             *arg)
+static sai_status_t mlnx_port_default_vlan_prio_set(_In_ const sai_object_key_t      *key,
+                                                    _In_ const sai_attribute_value_t *value,
+                                                    void                             *arg)
 {
     sai_status_t     status;
     sx_port_log_id_t port_id;
@@ -705,9 +711,9 @@ sai_status_t mlnx_port_default_vlan_prio_set(_In_ const sai_object_key_t      *k
 }
 
 /* Ingress Filtering (Drop Frames with Unknown VLANs) [bool] */
-sai_status_t mlnx_port_ingress_filter_set(_In_ const sai_object_key_t      *key,
-                                          _In_ const sai_attribute_value_t *value,
-                                          void                             *arg)
+static sai_status_t mlnx_port_ingress_filter_set(_In_ const sai_object_key_t      *key,
+                                                 _In_ const sai_attribute_value_t *value,
+                                                 void                             *arg)
 {
     sai_status_t     status;
     sx_port_log_id_t port_id;
@@ -731,9 +737,9 @@ sai_status_t mlnx_port_ingress_filter_set(_In_ const sai_object_key_t      *key,
 
 /* Dropping of untagged frames on ingress [bool] */
 /* Dropping of tagged frames on ingress [bool] */
-sai_status_t mlnx_port_drop_tags_set(_In_ const sai_object_key_t      *key,
-                                     _In_ const sai_attribute_value_t *value,
-                                     void                             *arg)
+static sai_status_t mlnx_port_drop_tags_set(_In_ const sai_object_key_t      *key,
+                                            _In_ const sai_attribute_value_t *value,
+                                            void                             *arg)
 {
     sai_status_t          status;
     sx_port_log_id_t      port_id;
@@ -768,9 +774,9 @@ sai_status_t mlnx_port_drop_tags_set(_In_ const sai_object_key_t      *key,
 }
 
 /* Internal loopback control [sai_port_loopback_mode_t] */
-sai_status_t mlnx_port_internal_loopback_set(_In_ const sai_object_key_t      *key,
-                                             _In_ const sai_attribute_value_t *value,
-                                             void                             *arg)
+static sai_status_t mlnx_port_internal_loopback_set(_In_ const sai_object_key_t      *key,
+                                                    _In_ const sai_attribute_value_t *value,
+                                                    void                             *arg)
 {
     sai_status_t            status;
     sx_port_log_id_t        port_id;
@@ -810,9 +816,9 @@ sai_status_t mlnx_port_internal_loopback_set(_In_ const sai_object_key_t      *k
 }
 
 /* FDB Learning mode [sai_port_fdb_learning_mode_t] */
-sai_status_t mlnx_port_fdb_learning_set(_In_ const sai_object_key_t      *key,
-                                        _In_ const sai_attribute_value_t *value,
-                                        void                             *arg)
+static sai_status_t mlnx_port_fdb_learning_set(_In_ const sai_object_key_t      *key,
+                                               _In_ const sai_attribute_value_t *value,
+                                               void                             *arg)
 {
     sai_status_t        status;
     sx_port_log_id_t    port_id;
@@ -856,7 +862,9 @@ sai_status_t mlnx_port_fdb_learning_set(_In_ const sai_object_key_t      *key,
 }
 
 /* MTU [uint32_t] */
-sai_status_t mlnx_port_mtu_set(_In_ const sai_object_key_t *key, _In_ const sai_attribute_value_t *value, void *arg)
+static sai_status_t mlnx_port_mtu_set(_In_ const sai_object_key_t      *key,
+                                      _In_ const sai_attribute_value_t *value,
+                                      void                             *arg)
 {
     sai_status_t     status;
     sx_port_log_id_t port_id;
@@ -876,8 +884,58 @@ sai_status_t mlnx_port_mtu_set(_In_ const sai_object_key_t *key, _In_ const sai_
     return SAI_STATUS_SUCCESS;
 }
 
+/** [sai_port_flow_control_mode_t]
+  (default to SAI_PORT_FLOW_CONTROL_DISABLE) */
+static sai_status_t mlnx_port_global_flow_ctrl_set(_In_ const sai_object_key_t      *key,
+                                                   _In_ const sai_attribute_value_t *value,
+                                                   void                             *arg)
+{
+    sx_port_log_id_t         port_id;
+    sai_status_t             status;
+    sx_port_flow_ctrl_mode_t ctrl_mode = SX_PORT_FLOW_CTRL_MODE_TX_DIS_RX_DIS;
+
+    SX_LOG_ENTER();
+
+    status = mlnx_object_to_type(key->object_id, SAI_OBJECT_TYPE_PORT, &port_id, NULL);
+    if (SAI_ERR(status)) {
+        goto out;
+    }
+
+    switch (value->u8) {
+        case SAI_PORT_FLOW_CONTROL_DISABLE:
+            ctrl_mode = SX_PORT_FLOW_CTRL_MODE_TX_DIS_RX_DIS;
+            break;
+        case SAI_PORT_FLOW_CONTROL_TX_ONLY:
+            ctrl_mode = SX_PORT_FLOW_CTRL_MODE_TX_EN_RX_DIS;
+            break;
+        case SAI_PORT_FLOW_CONTROL_RX_ONLY:
+            ctrl_mode = SX_PORT_FLOW_CTRL_MODE_TX_DIS_RX_EN;
+            break;
+        case SAI_PORT_FLOW_CONTROL_BOTH_ENABLE:
+            ctrl_mode = SX_PORT_FLOW_CTRL_MODE_TX_EN_RX_EN;
+            break;
+        default:
+            SX_LOG_ERR("Invalid SAI global flow control mode %u\n", ctrl_mode);
+            status = SAI_STATUS_INVALID_PARAMETER;
+            goto out;
+    }
+
+    status = sx_api_port_global_fc_enable_set(gh_sdk, port_id, ctrl_mode);
+    if (status != SX_STATUS_SUCCESS) {
+        SX_LOG_ERR("Failed to set port global flow control - %s\n", SX_STATUS_MSG(status));
+        status = sdk_to_sai(status);
+        goto out;
+    }
+
+out:
+    SX_LOG_EXIT();
+    return status;
+}
+
 /* Speed in Mbps [uint32_t] */
-sai_status_t mlnx_port_speed_set(_In_ const sai_object_key_t *key, _In_ const sai_attribute_value_t *value, void *arg)
+static sai_status_t mlnx_port_speed_set(_In_ const sai_object_key_t      *key,
+                                        _In_ const sai_attribute_value_t *value,
+                                        void                             *arg)
 {
     sai_status_t               status;
     sx_port_log_id_t           port_id;
@@ -956,9 +1014,9 @@ sai_status_t mlnx_port_speed_set(_In_ const sai_object_key_t *key, _In_ const sa
 }
 
 /* Auto Negotiation configuration [bool] */
-sai_status_t mlnx_port_auto_negotiation_set(_In_ const sai_object_key_t      *key,
-                                            _In_ const sai_attribute_value_t *value,
-                                            void                             *arg)
+static sai_status_t mlnx_port_auto_negotiation_set(_In_ const sai_object_key_t      *key,
+                                                   _In_ const sai_attribute_value_t *value,
+                                                   void                             *arg)
 {
     sai_status_t               status;
     sx_port_log_id_t           port_id;
@@ -984,9 +1042,9 @@ sai_status_t mlnx_port_auto_negotiation_set(_In_ const sai_object_key_t      *ke
 }
 
 /* Set WRED profile to a port */
-sai_status_t mlnx_port_wred_set(_In_ const sai_object_key_t      *key,
-                                _In_ const sai_attribute_value_t *value,
-                                void                             *arg)
+static sai_status_t mlnx_port_wred_set(_In_ const sai_object_key_t      *key,
+                                       _In_ const sai_attribute_value_t *value,
+                                       void                             *arg)
 {
     sai_object_id_t  wred_id = value->oid;
     sai_status_t     status  = SAI_STATUS_SUCCESS;
@@ -1011,11 +1069,11 @@ sai_status_t mlnx_port_wred_set(_In_ const sai_object_key_t      *key,
 }
 
 /* Port type [sai_port_type_t] */
-sai_status_t mlnx_port_type_get(_In_ const sai_object_key_t   *key,
-                                _Inout_ sai_attribute_value_t *value,
-                                _In_ uint32_t                  attr_index,
-                                _Inout_ vendor_cache_t        *cache,
-                                void                          *arg)
+static sai_status_t mlnx_port_type_get(_In_ const sai_object_key_t   *key,
+                                       _Inout_ sai_attribute_value_t *value,
+                                       _In_ uint32_t                  attr_index,
+                                       _Inout_ vendor_cache_t        *cache,
+                                       void                          *arg)
 {
     sai_status_t     status;
     sx_port_log_id_t port_id;
@@ -1056,11 +1114,11 @@ sai_status_t mlnx_port_type_get(_In_ const sai_object_key_t   *key,
 
 /* Operational Status [sai_port_oper_status_t] */
 /* Admin Mode [bool] */
-sai_status_t mlnx_port_state_get(_In_ const sai_object_key_t   *key,
-                                 _Inout_ sai_attribute_value_t *value,
-                                 _In_ uint32_t                  attr_index,
-                                 _Inout_ vendor_cache_t        *cache,
-                                 void                          *arg)
+static sai_status_t mlnx_port_state_get(_In_ const sai_object_key_t   *key,
+                                        _Inout_ sai_attribute_value_t *value,
+                                        _In_ uint32_t                  attr_index,
+                                        _Inout_ vendor_cache_t        *cache,
+                                        void                          *arg)
 {
     sai_status_t           status;
     sx_port_log_id_t       port_id;
@@ -1136,11 +1194,11 @@ sai_status_t find_port_in_db(_In_ sai_object_id_t port, _Out_ uint32_t *index)
 }
 
 /* Hardware Lane list [sai_u32_list_t] */
-sai_status_t mlnx_port_hw_lanes_get(_In_ const sai_object_key_t   *key,
-                                    _Inout_ sai_attribute_value_t *value,
-                                    _In_ uint32_t                  attr_index,
-                                    _Inout_ vendor_cache_t        *cache,
-                                    void                          *arg)
+static sai_status_t mlnx_port_hw_lanes_get(_In_ const sai_object_key_t   *key,
+                                           _Inout_ sai_attribute_value_t *value,
+                                           _In_ uint32_t                  attr_index,
+                                           _Inout_ vendor_cache_t        *cache,
+                                           void                          *arg)
 {
     uint32_t     lanes[4];
     uint32_t     ii, index;
@@ -1167,11 +1225,11 @@ sai_status_t mlnx_port_hw_lanes_get(_In_ const sai_object_key_t   *key,
 }
 
 /* Breakout mode(s) supported [sai_s32_list_t] */
-sai_status_t mlnx_port_supported_breakout_get(_In_ const sai_object_key_t   *key,
-                                              _Inout_ sai_attribute_value_t *value,
-                                              _In_ uint32_t                  attr_index,
-                                              _Inout_ vendor_cache_t        *cache,
-                                              void                          *arg)
+static sai_status_t mlnx_port_supported_breakout_get(_In_ const sai_object_key_t   *key,
+                                                     _Inout_ sai_attribute_value_t *value,
+                                                     _In_ uint32_t                  attr_index,
+                                                     _Inout_ vendor_cache_t        *cache,
+                                                     void                          *arg)
 {
     int32_t      modes[SAI_PORT_BREAKOUT_MODE_MAX];
     uint32_t     modes_num, index;
@@ -1224,11 +1282,11 @@ sai_status_t mlnx_port_supported_breakout_get(_In_ const sai_object_key_t   *key
 }
 
 /* Current breakout mode [sai_port_breakout_mode_type_t] */
-sai_status_t mlnx_port_current_breakout_get(_In_ const sai_object_key_t   *key,
-                                            _Inout_ sai_attribute_value_t *value,
-                                            _In_ uint32_t                  attr_index,
-                                            _Inout_ vendor_cache_t        *cache,
-                                            void                          *arg)
+static sai_status_t mlnx_port_current_breakout_get(_In_ const sai_object_key_t   *key,
+                                                   _Inout_ sai_attribute_value_t *value,
+                                                   _In_ uint32_t                  attr_index,
+                                                   _Inout_ vendor_cache_t        *cache,
+                                                   void                          *arg)
 {
     SX_LOG_ENTER();
 
@@ -1239,11 +1297,11 @@ sai_status_t mlnx_port_current_breakout_get(_In_ const sai_object_key_t   *key,
 }
 
 /* Query list of supported port speed in Mbps [sai_u32_list_t] */
-sai_status_t mlnx_port_supported_speed_get(_In_ const sai_object_key_t   *key,
-                                           _Inout_ sai_attribute_value_t *value,
-                                           _In_ uint32_t                  attr_index,
-                                           _Inout_ vendor_cache_t        *cache,
-                                           void                          *arg)
+static sai_status_t mlnx_port_supported_speed_get(_In_ const sai_object_key_t   *key,
+                                                  _Inout_ sai_attribute_value_t *value,
+                                                  _In_ uint32_t                  attr_index,
+                                                  _Inout_ vendor_cache_t        *cache,
+                                                  void                          *arg)
 {
     uint32_t             speeds[NUM_SPEEDS];
     uint32_t             speeds_num = 0;
@@ -1301,30 +1359,31 @@ sai_status_t mlnx_port_supported_speed_get(_In_ const sai_object_key_t   *key,
     return status;
 }
 
-sai_status_t mlnx_port_number_of_priority_groups_get(_In_ const sai_object_key_t   *key,
-                                           _Inout_ sai_attribute_value_t *value,
-                                           _In_ uint32_t                  attr_index,
-                                           _Inout_ vendor_cache_t        *cache,
-                                           void                          *arg)
+static sai_status_t mlnx_port_number_of_priority_groups_get(_In_ const sai_object_key_t   *key,
+                                                            _Inout_ sai_attribute_value_t *value,
+                                                            _In_ uint32_t                  attr_index,
+                                                            _Inout_ vendor_cache_t        *cache,
+                                                            void                          *arg)
 {
     sai_status_t status = SAI_STATUS_SUCCESS;
+
     SX_LOG_ENTER();
     value->u32 = mlnx_sai_get_buffer_resource_limits()->num_port_pg_buff;
     SX_LOG_EXIT();
     return status;
 }
 
-sai_status_t mlnx_port_priority_group_list_get(_In_ const sai_object_key_t   *key,
-                                           _Inout_ sai_attribute_value_t *value,
-                                           _In_ uint32_t                  attr_index,
-                                           _Inout_ vendor_cache_t        *cache,
-                                           void                          *arg)
+static sai_status_t mlnx_port_priority_group_list_get(_In_ const sai_object_key_t   *key,
+                                                      _Inout_ sai_attribute_value_t *value,
+                                                      _In_ uint32_t                  attr_index,
+                                                      _Inout_ vendor_cache_t        *cache,
+                                                      void                          *arg)
 {
-    sai_status_t sai_status;
-    sai_object_id_t sai_pg = SAI_NULL_OBJECT_ID;
-    uint8_t port_pg_ind = 0;
-    uint32_t db_port_index;
-    uint8_t extended_data[EXTENDED_DATA_SIZE];
+    sai_status_t     sai_status;
+    sai_object_id_t  sai_pg      = SAI_NULL_OBJECT_ID;
+    uint8_t          port_pg_ind = 0;
+    uint32_t         db_port_index;
+    uint8_t          extended_data[EXTENDED_DATA_SIZE];
     sai_object_id_t* sai_pg_array;
 
     SX_LOG_ENTER();
@@ -1334,14 +1393,14 @@ sai_status_t mlnx_port_priority_group_list_get(_In_ const sai_object_key_t   *ke
     sai_status = find_port_in_db(key->object_id, &db_port_index);
     cl_plock_release(&g_sai_db_ptr->p_lock);
 
-    if(SAI_STATUS_SUCCESS != sai_status) {
+    if (SAI_STATUS_SUCCESS != sai_status) {
         free(sai_pg_array);
         SX_LOG_EXIT();
         return sai_status;
     }
-    for(port_pg_ind = 0; port_pg_ind < mlnx_sai_get_buffer_resource_limits()->num_port_pg_buff; port_pg_ind++) {
+    for (port_pg_ind = 0; port_pg_ind < mlnx_sai_get_buffer_resource_limits()->num_port_pg_buff; port_pg_ind++) {
         extended_data[0] = port_pg_ind;
-        if (SAI_STATUS_SUCCESS != 
+        if (SAI_STATUS_SUCCESS !=
             (sai_status = mlnx_create_object(SAI_OBJECT_TYPE_PRIORITY_GROUP, db_port_index, extended_data, &sai_pg))) {
             free(sai_pg_array);
             SX_LOG_EXIT();
@@ -1349,18 +1408,19 @@ sai_status_t mlnx_port_priority_group_list_get(_In_ const sai_object_key_t   *ke
         }
         sai_pg_array[port_pg_ind] = sai_pg;
     }
-    sai_status = mlnx_fill_objlist(sai_pg_array, mlnx_sai_get_buffer_resource_limits()->num_port_pg_buff, &value->objlist);
+    sai_status = mlnx_fill_objlist(sai_pg_array,
+                                   mlnx_sai_get_buffer_resource_limits()->num_port_pg_buff, &value->objlist);
     free(sai_pg_array);
     SX_LOG_EXIT();
     return sai_status;
 }
 
 /* Speed in Mbps [uint32_t] */
-sai_status_t mlnx_port_speed_get(_In_ const sai_object_key_t   *key,
-                                 _Inout_ sai_attribute_value_t *value,
-                                 _In_ uint32_t                  attr_index,
-                                 _Inout_ vendor_cache_t        *cache,
-                                 void                          *arg)
+static sai_status_t mlnx_port_speed_get(_In_ const sai_object_key_t   *key,
+                                        _Inout_ sai_attribute_value_t *value,
+                                        _In_ uint32_t                  attr_index,
+                                        _Inout_ vendor_cache_t        *cache,
+                                        void                          *arg)
 {
     sai_status_t               status;
     sx_port_log_id_t           port_id;
@@ -1409,11 +1469,11 @@ sai_status_t mlnx_port_speed_get(_In_ const sai_object_key_t   *key,
 }
 
 /* Full Duplex setting [bool] */
-sai_status_t mlnx_port_duplex_get(_In_ const sai_object_key_t   *key,
-                                  _Inout_ sai_attribute_value_t *value,
-                                  _In_ uint32_t                  attr_index,
-                                  _Inout_ vendor_cache_t        *cache,
-                                  void                          *arg)
+static sai_status_t mlnx_port_duplex_get(_In_ const sai_object_key_t   *key,
+                                         _Inout_ sai_attribute_value_t *value,
+                                         _In_ uint32_t                  attr_index,
+                                         _Inout_ vendor_cache_t        *cache,
+                                         void                          *arg)
 {
     SX_LOG_ENTER();
 
@@ -1424,11 +1484,11 @@ sai_status_t mlnx_port_duplex_get(_In_ const sai_object_key_t   *key,
 }
 
 /* Auto Negotiation configuration [bool] */
-sai_status_t mlnx_port_auto_negotiation_get(_In_ const sai_object_key_t   *key,
-                                            _Inout_ sai_attribute_value_t *value,
-                                            _In_ uint32_t                  attr_index,
-                                            _Inout_ vendor_cache_t        *cache,
-                                            void                          *arg)
+static sai_status_t mlnx_port_auto_negotiation_get(_In_ const sai_object_key_t   *key,
+                                                   _Inout_ sai_attribute_value_t *value,
+                                                   _In_ uint32_t                  attr_index,
+                                                   _Inout_ vendor_cache_t        *cache,
+                                                   void                          *arg)
 {
     sai_status_t               status;
     sx_port_log_id_t           port_id;
@@ -1455,11 +1515,11 @@ sai_status_t mlnx_port_auto_negotiation_get(_In_ const sai_object_key_t   *key,
 /* Port VLAN ID [sai_vlan_id_t]
  * Untagged ingress frames are tagged with Port VLAN ID (PVID)
  */
-sai_status_t mlnx_port_pvid_get(_In_ const sai_object_key_t   *key,
-                                _Inout_ sai_attribute_value_t *value,
-                                _In_ uint32_t                  attr_index,
-                                _Inout_ vendor_cache_t        *cache,
-                                void                          *arg)
+static sai_status_t mlnx_port_pvid_get(_In_ const sai_object_key_t   *key,
+                                       _Inout_ sai_attribute_value_t *value,
+                                       _In_ uint32_t                  attr_index,
+                                       _Inout_ vendor_cache_t        *cache,
+                                       void                          *arg)
 {
     sai_status_t     status;
     sx_port_log_id_t port_id;
@@ -1484,11 +1544,11 @@ sai_status_t mlnx_port_pvid_get(_In_ const sai_object_key_t   *key,
 
 /* Default VLAN Priority [uint8_t]
  *  (default to 0) */
-sai_status_t mlnx_port_default_vlan_prio_get(_In_ const sai_object_key_t   *key,
-                                             _Inout_ sai_attribute_value_t *value,
-                                             _In_ uint32_t                  attr_index,
-                                             _Inout_ vendor_cache_t        *cache,
-                                             void                          *arg)
+static sai_status_t mlnx_port_default_vlan_prio_get(_In_ const sai_object_key_t   *key,
+                                                    _Inout_ sai_attribute_value_t *value,
+                                                    _In_ uint32_t                  attr_index,
+                                                    _Inout_ vendor_cache_t        *cache,
+                                                    void                          *arg)
 {
     sai_status_t      status;
     sx_port_log_id_t  port_id;
@@ -1512,11 +1572,11 @@ sai_status_t mlnx_port_default_vlan_prio_get(_In_ const sai_object_key_t   *key,
 }
 
 /* Ingress Filtering (Drop Frames with Unknown VLANs) [bool] */
-sai_status_t mlnx_port_ingress_filter_get(_In_ const sai_object_key_t   *key,
-                                          _Inout_ sai_attribute_value_t *value,
-                                          _In_ uint32_t                  attr_index,
-                                          _Inout_ vendor_cache_t        *cache,
-                                          void                          *arg)
+static sai_status_t mlnx_port_ingress_filter_get(_In_ const sai_object_key_t   *key,
+                                                 _Inout_ sai_attribute_value_t *value,
+                                                 _In_ uint32_t                  attr_index,
+                                                 _Inout_ vendor_cache_t        *cache,
+                                                 void                          *arg)
 {
     sai_status_t          status;
     sx_port_log_id_t      port_id;
@@ -1541,11 +1601,11 @@ sai_status_t mlnx_port_ingress_filter_get(_In_ const sai_object_key_t   *key,
 
 /* Dropping of untagged frames on ingress [bool] */
 /* Dropping of tagged frames on ingress [bool] */
-sai_status_t mlnx_port_drop_tags_get(_In_ const sai_object_key_t   *key,
-                                     _Inout_ sai_attribute_value_t *value,
-                                     _In_ uint32_t                  attr_index,
-                                     _Inout_ vendor_cache_t        *cache,
-                                     void                          *arg)
+static sai_status_t mlnx_port_drop_tags_get(_In_ const sai_object_key_t   *key,
+                                            _Inout_ sai_attribute_value_t *value,
+                                            _In_ uint32_t                  attr_index,
+                                            _Inout_ vendor_cache_t        *cache,
+                                            void                          *arg)
 {
     sai_status_t          status;
     sx_port_log_id_t      port_id;
@@ -1575,11 +1635,11 @@ sai_status_t mlnx_port_drop_tags_get(_In_ const sai_object_key_t   *key,
 }
 
 /* Internal loopback control [sai_port_internal_loopback_mode_t] */
-sai_status_t mlnx_port_internal_loopback_get(_In_ const sai_object_key_t   *key,
-                                             _Inout_ sai_attribute_value_t *value,
-                                             _In_ uint32_t                  attr_index,
-                                             _Inout_ vendor_cache_t        *cache,
-                                             void                          *arg)
+static sai_status_t mlnx_port_internal_loopback_get(_In_ const sai_object_key_t   *key,
+                                                    _Inout_ sai_attribute_value_t *value,
+                                                    _In_ uint32_t                  attr_index,
+                                                    _Inout_ vendor_cache_t        *cache,
+                                                    void                          *arg)
 {
     sai_status_t            status;
     sx_port_log_id_t        port_id;
@@ -1608,11 +1668,11 @@ sai_status_t mlnx_port_internal_loopback_get(_In_ const sai_object_key_t   *key,
 }
 
 /* FDB Learning mode [sai_port_fdb_learning_mode_t] */
-sai_status_t mlnx_port_fdb_learning_get(_In_ const sai_object_key_t   *key,
-                                        _Inout_ sai_attribute_value_t *value,
-                                        _In_ uint32_t                  attr_index,
-                                        _Inout_ vendor_cache_t        *cache,
-                                        void                          *arg)
+static sai_status_t mlnx_port_fdb_learning_get(_In_ const sai_object_key_t   *key,
+                                               _Inout_ sai_attribute_value_t *value,
+                                               _In_ uint32_t                  attr_index,
+                                               _Inout_ vendor_cache_t        *cache,
+                                               void                          *arg)
 {
     sai_status_t        status;
     sx_port_log_id_t    port_id;
@@ -1642,11 +1702,11 @@ sai_status_t mlnx_port_fdb_learning_get(_In_ const sai_object_key_t   *key,
 }
 
 /* MTU [uint32_t] */
-sai_status_t mlnx_port_mtu_get(_In_ const sai_object_key_t   *key,
-                               _Inout_ sai_attribute_value_t *value,
-                               _In_ uint32_t                  attr_index,
-                               _Inout_ vendor_cache_t        *cache,
-                               void                          *arg)
+static sai_status_t mlnx_port_mtu_get(_In_ const sai_object_key_t   *key,
+                                      _Inout_ sai_attribute_value_t *value,
+                                      _In_ uint32_t                  attr_index,
+                                      _Inout_ vendor_cache_t        *cache,
+                                      void                          *arg)
 {
     sai_status_t     status;
     sx_port_log_id_t port_id;
@@ -1670,12 +1730,62 @@ sai_status_t mlnx_port_mtu_get(_In_ const sai_object_key_t   *key,
     return SAI_STATUS_SUCCESS;
 }
 
+/** [sai_port_flow_control_mode_t]
+  (default to SAI_PORT_FLOW_CONTROL_DISABLE) */
+static sai_status_t mlnx_port_global_flow_ctrl_get(_In_ const sai_object_key_t   *key,
+                                                   _Inout_ sai_attribute_value_t *value,
+                                                   _In_ uint32_t                  attr_index,
+                                                   _Inout_ vendor_cache_t        *cache,
+                                                   void                          *arg)
+{
+    sx_port_log_id_t         port_id;
+    sai_status_t             status;
+    sx_port_flow_ctrl_mode_t ctrl_mode;
+
+    SX_LOG_ENTER();
+
+    status = mlnx_object_to_type(key->object_id, SAI_OBJECT_TYPE_PORT, &port_id, NULL);
+    if (SAI_ERR(status)) {
+        goto out;
+    }
+
+    status = sx_api_port_global_fc_enable_get(gh_sdk, port_id, &ctrl_mode);
+    if (status != SX_STATUS_SUCCESS) {
+        SX_LOG_ERR("Failed to get port global flow control - %s\n", SX_STATUS_MSG(status));
+        status = sdk_to_sai(status);
+        goto out;
+    }
+
+    switch (ctrl_mode) {
+    case SX_PORT_FLOW_CTRL_MODE_TX_DIS_RX_DIS:
+        value->u8 = SAI_PORT_FLOW_CONTROL_DISABLE;
+        break;
+    case SX_PORT_FLOW_CTRL_MODE_TX_EN_RX_DIS:
+        value->u8 = SAI_PORT_FLOW_CONTROL_TX_ONLY;
+        break;
+    case SX_PORT_FLOW_CTRL_MODE_TX_DIS_RX_EN:
+        value->u8 = SAI_PORT_FLOW_CONTROL_RX_ONLY;
+        break;
+    case SX_PORT_FLOW_CTRL_MODE_TX_EN_RX_EN:
+        value->u8 = SAI_PORT_FLOW_CONTROL_BOTH_ENABLE;
+        break;
+    default:
+        SX_LOG_ERR("Invalid SDK global flow control mode %u\n", ctrl_mode);
+        status = SAI_STATUS_FAILURE;
+        goto out;
+    }
+
+out:
+    SX_LOG_EXIT();
+    return status;
+}
+
 /* Update DSCP [bool] */
-sai_status_t mlnx_port_update_dscp_get(_In_ const sai_object_key_t   *key,
-                                       _Inout_ sai_attribute_value_t *value,
-                                       _In_ uint32_t                  attr_index,
-                                       _Inout_ vendor_cache_t        *cache,
-                                       void                          *arg)
+static sai_status_t mlnx_port_update_dscp_get(_In_ const sai_object_key_t   *key,
+                                              _Inout_ sai_attribute_value_t *value,
+                                              _In_ uint32_t                  attr_index,
+                                              _Inout_ vendor_cache_t        *cache,
+                                              void                          *arg)
 {
     sx_cos_rewrite_enable_t rewrite_enable;
     sx_port_log_id_t        port_id;
@@ -1701,9 +1811,9 @@ sai_status_t mlnx_port_update_dscp_get(_In_ const sai_object_key_t   *key,
 }
 
 /* Update DSCP [bool] */
-sai_status_t mlnx_port_update_dscp_set(_In_ const sai_object_key_t      *key,
-                                       _In_ const sai_attribute_value_t *value,
-                                       void                             *arg)
+static sai_status_t mlnx_port_update_dscp_set(_In_ const sai_object_key_t      *key,
+                                              _In_ const sai_attribute_value_t *value,
+                                              void                             *arg)
 {
     sx_cos_rewrite_enable_t rewrite_enable;
     sx_port_log_id_t        port_id;
@@ -1733,147 +1843,374 @@ sai_status_t mlnx_port_update_dscp_set(_In_ const sai_object_key_t      *key,
     return status;
 }
 
-sai_status_t mlnx_port_mirror_session_get(_In_ const sai_object_key_t   *key,
-                                          _Inout_ sai_attribute_value_t *value,
-										  _In_ uint32_t                  attr_index,
-										  _Inout_ vendor_cache_t        *cache,
-										  void                          *arg)
+static sai_status_t mlnx_port_mirror_session_get(_In_ const sai_object_key_t   *key,
+                                                 _Inout_ sai_attribute_value_t *value,
+                                                 _In_ uint32_t                  attr_index,
+                                                 _Inout_ vendor_cache_t        *cache,
+                                                 void                          *arg)
 {
-	sx_port_log_id_t        sdk_mirror_port_id = 0;
-	sai_status_t 		    status = SAI_STATUS_FAILURE;
-	sx_span_session_id_t	sdk_mirror_obj_id = 0;
-    sx_mirror_direction_t   sdk_mirror_direction = SX_SPAN_MIRROR_INGRESS;
-    sai_object_id_t         sai_mirror_obj_id = 0;
-    const uint32_t          sai_mirror_session_count = 1;
-	SX_LOG_ENTER();	
+    sx_port_log_id_t      sdk_mirror_port_id       = 0;
+    sai_status_t          status                   = SAI_STATUS_FAILURE;
+    sx_span_session_id_t  sdk_mirror_obj_id        = 0;
+    sx_mirror_direction_t sdk_mirror_direction     = SX_SPAN_MIRROR_INGRESS;
+    sai_object_id_t       sai_mirror_obj_id        = 0;
+    const uint32_t        sai_mirror_session_count = 1;
+
+    SX_LOG_ENTER();
 
     assert((MIRROR_INGRESS_PORT == (long)arg) || (MIRROR_EGRESS_PORT == (long)arg));
-    
+
     if (SAI_STATUS_SUCCESS !=
         (status = mlnx_object_to_type(key->object_id, SAI_OBJECT_TYPE_PORT, &sdk_mirror_port_id, NULL))) {
-		SX_LOG_ERR("Invalid sai mirror port id %"PRIx64"\n", key->object_id);
+        SX_LOG_ERR("Invalid sai mirror port id %" PRIx64 "\n", key->object_id);
         SX_LOG_EXIT();
         return status;
     }
-    
+
     if (MIRROR_INGRESS_PORT == (long)arg) {
         sdk_mirror_direction = SX_SPAN_MIRROR_INGRESS;
     } else if (MIRROR_EGRESS_PORT == (long)arg) {
         sdk_mirror_direction = SX_SPAN_MIRROR_EGRESS;
     }
 
-	if (SAI_STATUS_SUCCESS !=
-		(status = sdk_to_sai(sx_api_span_mirror_get(gh_sdk, sdk_mirror_port_id, sdk_mirror_direction, &sdk_mirror_obj_id)))) {
-		value->objlist.count = 0;
-		SX_LOG_ERR("Error getting sdk mirror object id from sdk mirror port id %d\n", sdk_mirror_port_id);
+    if (SAI_STATUS_SUCCESS !=
+        (status =
+             sdk_to_sai(sx_api_span_mirror_get(gh_sdk, sdk_mirror_port_id, sdk_mirror_direction,
+                                               &sdk_mirror_obj_id)))) {
+        value->objlist.count = 0;
+        SX_LOG_ERR("Error getting sdk mirror object id from sdk mirror port id %d\n", sdk_mirror_port_id);
         SX_LOG_EXIT();
-		return status;
-	}
-	
-	if (SAI_STATUS_SUCCESS !=
+        return status;
+    }
+
+    if (SAI_STATUS_SUCCESS !=
         (status = mlnx_create_object(SAI_OBJECT_TYPE_MIRROR, sdk_mirror_obj_id, NULL, &sai_mirror_obj_id))) {
-		SX_LOG_ERR("Error creating sai mirror obj id from sdk mirror obj id %d\n", sdk_mirror_obj_id);
+        SX_LOG_ERR("Error creating sai mirror obj id from sdk mirror obj id %d\n", sdk_mirror_obj_id);
         SX_LOG_EXIT();
-		return status;
-	}
-    
+        return status;
+    }
+
     if (SAI_STATUS_SUCCESS !=
         (status = mlnx_fill_objlist(&sai_mirror_obj_id, sai_mirror_session_count, &value->objlist))) {
-        SX_LOG_ERR("Error filling object list using sai mirror obj id %"PRId64"\n", sai_mirror_obj_id);
+        SX_LOG_ERR("Error filling object list using sai mirror obj id %" PRId64 "\n", sai_mirror_obj_id);
         SX_LOG_EXIT();
-		return status;   
+        return status;
     }
-	
-	SX_LOG_EXIT();
-	return status;						  
+
+    SX_LOG_EXIT();
+    return status;
 }
 
-sai_status_t mlnx_port_mirror_session_set(_In_ const sai_object_key_t      *key,
-										  _In_ const sai_attribute_value_t *value,
-										  void                             *arg)
+static sai_status_t mlnx_port_mirror_session_set(_In_ const sai_object_key_t      *key,
+                                                 _In_ const sai_attribute_value_t *value,
+                                                 void                             *arg)
 {
-	uint32_t                sdk_mirror_port_id = 0;
-	sai_status_t 		    status = SAI_STATUS_FAILURE;
-	uint32_t 		        sdk_mirror_obj_id_u32 = 0;
-    sx_span_session_id_t    sdk_mirror_obj_id = 0;
-    sx_mirror_direction_t   sdk_mirror_direction = SX_SPAN_MIRROR_INGRESS;
-    const uint32_t          sai_mirror_session_count = 1;
-    
-	SX_LOG_ENTER();	
-    
+    uint32_t              sdk_mirror_port_id       = 0;
+    sai_status_t          status                   = SAI_STATUS_FAILURE;
+    uint32_t              sdk_mirror_obj_id_u32    = 0;
+    sx_span_session_id_t  sdk_mirror_obj_id        = 0;
+    sx_mirror_direction_t sdk_mirror_direction     = SX_SPAN_MIRROR_INGRESS;
+    const uint32_t        sai_mirror_session_count = 1;
+
+    SX_LOG_ENTER();
+
     assert((MIRROR_INGRESS_PORT == (long)arg) || (MIRROR_EGRESS_PORT == (long)arg));
 
     if (SAI_STATUS_SUCCESS !=
         (status = mlnx_object_to_type(key->object_id, SAI_OBJECT_TYPE_PORT, &sdk_mirror_port_id, NULL))) {
-		SX_LOG_ERR("Invalid sai mirror port id %"PRIx64"\n", key->object_id);
+        SX_LOG_ERR("Invalid sai mirror port id %" PRIx64 "\n", key->object_id);
         SX_LOG_EXIT();
         return status;
     }
-    
+
     if (MIRROR_INGRESS_PORT == (long)arg) {
         sdk_mirror_direction = SX_SPAN_MIRROR_INGRESS;
     } else if (MIRROR_EGRESS_PORT == (long)arg) {
         sdk_mirror_direction = SX_SPAN_MIRROR_EGRESS;
     }
-	
-	if (0 == value->objlist.count) {
-		if (SAI_STATUS_SUCCESS !=
-            (status = sdk_to_sai(sx_api_span_mirror_get(gh_sdk, (sx_port_log_id_t)sdk_mirror_port_id, sdk_mirror_direction, &sdk_mirror_obj_id)))) {
-			SX_LOG_ERR("Error getting mirror obj id from sdk mirror port id %x\n", sdk_mirror_port_id);
-            SX_LOG_EXIT();
-			return status;
-		}
+
+    if (0 == value->objlist.count) {
         if (SAI_STATUS_SUCCESS !=
-            (status = sdk_to_sai(sx_api_span_mirror_state_set(gh_sdk, (sx_port_log_id_t)sdk_mirror_port_id, sdk_mirror_direction, false)))) {
-			SX_LOG_ERR("Error setting mirror port state to false on sdk mirror port id %x\n", sdk_mirror_port_id);
+            (status =
+                 sdk_to_sai(sx_api_span_mirror_get(gh_sdk, (sx_port_log_id_t)sdk_mirror_port_id, sdk_mirror_direction,
+                                                   &sdk_mirror_obj_id)))) {
+            SX_LOG_ERR("Error getting mirror obj id from sdk mirror port id %x\n", sdk_mirror_port_id);
             SX_LOG_EXIT();
-			return status;
+            return status;
         }
-		if (SAI_STATUS_SUCCESS !=
-            (status = sdk_to_sai(sx_api_span_mirror_set(gh_sdk, SX_ACCESS_CMD_DELETE, (sx_port_log_id_t)sdk_mirror_port_id, sdk_mirror_direction, sdk_mirror_obj_id)))) {
-			SX_LOG_ERR("Error deleting sdk mirror port %x for sdk mirror obj id %d\n", sdk_mirror_port_id, sdk_mirror_obj_id);
-            SX_LOG_EXIT();
-			return status;
-		}
-		SX_LOG_NTC("Successfully deleted sdk mirror port %x on sdk mirror obj id %d\n", sdk_mirror_port_id, sdk_mirror_obj_id);
-        SX_LOG_EXIT();
-		return SAI_STATUS_SUCCESS;
-	} else if (sai_mirror_session_count == value->objlist.count) {       
         if (SAI_STATUS_SUCCESS !=
-            (status = mlnx_object_to_type(value->objlist.list[0], SAI_OBJECT_TYPE_MIRROR, &sdk_mirror_obj_id_u32, NULL))) {
-            SX_LOG_ERR("Invalid sai mirror obj id %"PRId64"\n", value->objlist.list[0]);
+            (status =
+                 sdk_to_sai(sx_api_span_mirror_state_set(gh_sdk, (sx_port_log_id_t)sdk_mirror_port_id,
+                                                         sdk_mirror_direction,
+                                                         false)))) {
+            SX_LOG_ERR("Error setting mirror port state to false on sdk mirror port id %x\n", sdk_mirror_port_id);
+            SX_LOG_EXIT();
+            return status;
+        }
+        if (SAI_STATUS_SUCCESS !=
+            (status =
+                 sdk_to_sai(sx_api_span_mirror_set(gh_sdk, SX_ACCESS_CMD_DELETE, (sx_port_log_id_t)sdk_mirror_port_id,
+                                                   sdk_mirror_direction, sdk_mirror_obj_id)))) {
+            SX_LOG_ERR("Error deleting sdk mirror port %x for sdk mirror obj id %d\n",
+                       sdk_mirror_port_id,
+                       sdk_mirror_obj_id);
+            SX_LOG_EXIT();
+            return status;
+        }
+        SX_LOG_NTC("Successfully deleted sdk mirror port %x on sdk mirror obj id %d\n",
+                   sdk_mirror_port_id,
+                   sdk_mirror_obj_id);
+        SX_LOG_EXIT();
+        return SAI_STATUS_SUCCESS;
+    } else if (sai_mirror_session_count == value->objlist.count) {
+        if (SAI_STATUS_SUCCESS !=
+            (status =
+                 mlnx_object_to_type(value->objlist.list[0], SAI_OBJECT_TYPE_MIRROR, &sdk_mirror_obj_id_u32, NULL))) {
+            SX_LOG_ERR("Invalid sai mirror obj id %" PRId64 "\n", value->objlist.list[0]);
             SX_LOG_EXIT();
             return status;
         }
 
         if (SAI_STATUS_SUCCESS !=
-            (status = sdk_to_sai(sx_api_span_mirror_set(gh_sdk, SX_ACCESS_CMD_ADD, (sx_port_log_id_t)sdk_mirror_port_id, sdk_mirror_direction, (sx_span_session_id_t)sdk_mirror_obj_id_u32)))) {
-			SX_LOG_ERR("Error setting sdk mirror port id %x on sdk mirror obj id %d\n", sdk_mirror_port_id, sdk_mirror_obj_id_u32);
+            (status =
+                 sdk_to_sai(sx_api_span_mirror_set(gh_sdk, SX_ACCESS_CMD_ADD, (sx_port_log_id_t)sdk_mirror_port_id,
+                                                   sdk_mirror_direction,
+                                                   (sx_span_session_id_t)sdk_mirror_obj_id_u32)))) {
+            SX_LOG_ERR("Error setting sdk mirror port id %x on sdk mirror obj id %d\n",
+                       sdk_mirror_port_id,
+                       sdk_mirror_obj_id_u32);
             SX_LOG_EXIT();
-			return status;
+            return status;
         }
         if (SAI_STATUS_SUCCESS !=
-            (status = sdk_to_sai(sx_api_span_mirror_state_set(gh_sdk, (sx_port_log_id_t)sdk_mirror_port_id, sdk_mirror_direction, true)))) {
-			SX_LOG_ERR("Error setting mirror port state to true on sdk mirror port id %x\n", sdk_mirror_port_id);
+            (status =
+                 sdk_to_sai(sx_api_span_mirror_state_set(gh_sdk, (sx_port_log_id_t)sdk_mirror_port_id,
+                                                         sdk_mirror_direction,
+                                                         true)))) {
+            SX_LOG_ERR("Error setting mirror port state to true on sdk mirror port id %x\n", sdk_mirror_port_id);
             SX_LOG_EXIT();
-			return status;
+            return status;
         }
     } else {
         SX_LOG_ERR("Only one mirror session can be associated to a mirror port\n");
         SX_LOG_EXIT();
         return SAI_STATUS_NOT_IMPLEMENTED;
     }
-		
+
     SX_LOG_EXIT();
-	return SAI_STATUS_SUCCESS;						  
+    return SAI_STATUS_SUCCESS;
+}
+
+static sai_status_t mlnx_port_db_idx_get(_In_ const sx_port_log_id_t sdk_port_id, _Out_ uint32_t *sai_port_db_idx)
+{
+    SX_LOG_ENTER();
+
+    if (NULL == sai_port_db_idx) {
+        SX_LOG_ERR("Index pointer for sai port db should not be NULL\n");
+        SX_LOG_EXIT();
+        return SAI_STATUS_FAILURE;
+    }
+
+    assert(NULL != g_sai_db_ptr);
+
+    /* caller of this function should add read lock around the callsite */
+
+    for (*sai_port_db_idx = 0; *sai_port_db_idx < MAX_PORTS; (*sai_port_db_idx)++) {
+        if (sdk_port_id == g_sai_db_ptr->ports_db[*sai_port_db_idx].logical) {
+            SX_LOG_DBG("Found ports #%d in sai port db has sdk logical port id %d\n", *sai_port_db_idx, sdk_port_id);
+            SX_LOG_EXIT();
+            return SAI_STATUS_SUCCESS;
+        }
+    }
+
+    SX_LOG_EXIT();
+    return SAI_STATUS_SUCCESS;
+}
+
+static sai_status_t mlnx_port_samplepacket_session_get(_In_ const sai_object_key_t   *key,
+                                                       _Inout_ sai_attribute_value_t *value,
+                                                       _In_ uint32_t                  attr_index,
+                                                       _Inout_ vendor_cache_t        *cache,
+                                                       void                          *arg)
+{
+    sai_status_t status                        = SAI_STATUS_FAILURE;
+    uint32_t     sdk_samplepacket_port_id      = 0;
+    uint32_t     sai_port_db_idx               = 0;
+    uint32_t     internal_samplepacket_obj_idx = 0;
+
+    SX_LOG_ENTER();
+
+    assert((SAMPLEPACKET_INGRESS_PORT == (long)arg) || (SAMPLEPACKET_EGRESS_PORT == (long)arg));
+
+    if (SAMPLEPACKET_EGRESS_PORT == (long)arg) {
+        SX_LOG_ERR("Egress samplepacket on port is not supported yet\n");
+        SX_LOG_EXIT();
+        return SAI_STATUS_NOT_SUPPORTED;
+    }
+
+    assert(SAMPLEPACKET_INGRESS_PORT == (long)arg);
+
+    if (SAI_STATUS_SUCCESS !=
+        (status = mlnx_object_to_type(key->object_id, SAI_OBJECT_TYPE_PORT, &sdk_samplepacket_port_id, NULL))) {
+        SX_LOG_ERR("Invalid sai samplepacket port id %" PRIx64 "\n", key->object_id);
+        SX_LOG_EXIT();
+        return status;
+    }
+
+    assert(NULL != g_sai_db_ptr);
+
+    sai_db_read_lock();
+
+    if (SAI_STATUS_SUCCESS !=
+        (status = mlnx_port_db_idx_get(sdk_samplepacket_port_id, &sai_port_db_idx))) {
+        SX_LOG_ERR("Cannot find sdk port %d in sai port db\n", sdk_samplepacket_port_id);
+        goto cleanup;
+    }
+
+    if (MLNX_INVALID_SAMPLEPACKET_SESSION ==
+        g_sai_db_ptr->ports_db[sai_port_db_idx].internal_ingress_samplepacket_obj_idx) {
+        value->oid = SAI_NULL_OBJECT_ID;
+        SX_LOG_DBG("sdk samplepacket port id %d does not have associated ingress samplepacket obj id\n",
+                   sdk_samplepacket_port_id);
+        status = SAI_STATUS_SUCCESS;
+        goto cleanup;
+    }
+
+    internal_samplepacket_obj_idx = g_sai_db_ptr->ports_db[sai_port_db_idx].internal_ingress_samplepacket_obj_idx;
+
+    if (SAI_STATUS_SUCCESS !=
+        (status =
+             mlnx_create_object(SAI_OBJECT_TYPE_SAMPLEPACKET, internal_samplepacket_obj_idx, NULL, &value->oid))) {
+        SX_LOG_ERR("Error creating sai samplepacket obj id from internal samplepacket obj idx %d\n",
+                   internal_samplepacket_obj_idx);
+        goto cleanup;
+    }
+
+    status = SAI_STATUS_SUCCESS;
+
+cleanup:
+    sai_db_unlock();
+    SX_LOG_EXIT();
+    return status;
+}
+
+static sai_status_t mlnx_port_samplepacket_session_set(_In_ const sai_object_key_t      *key,
+                                                       _In_ const sai_attribute_value_t *value,
+                                                       void                             *arg)
+{
+    sai_status_t           status                        = SAI_STATUS_FAILURE;
+    uint32_t               sdk_samplepacket_port_id      = 0;
+    uint32_t               sai_port_db_idx               = 0;
+    uint32_t               internal_samplepacket_obj_idx = 0;
+    sx_access_cmd_t        sdk_cmd                       = SX_ACCESS_CMD_EDIT;
+    sx_port_sflow_params_t sdk_sflow_params;
+
+    memset(&sdk_sflow_params, 0, sizeof(sx_port_sflow_params_t));
+    SX_LOG_ENTER();
+
+    assert((SAMPLEPACKET_INGRESS_PORT == (long)arg) || (SAMPLEPACKET_EGRESS_PORT == (long)arg));
+
+    if (SAMPLEPACKET_EGRESS_PORT == (long)arg) {
+        SX_LOG_ERR("Egress samplepacket on port is not supported yet\n");
+        SX_LOG_EXIT();
+        return SAI_STATUS_NOT_SUPPORTED;
+    }
+
+    assert(SAMPLEPACKET_INGRESS_PORT == (long)arg);
+
+    if (SAI_STATUS_SUCCESS !=
+        (status = mlnx_object_to_type(key->object_id, SAI_OBJECT_TYPE_PORT, &sdk_samplepacket_port_id, NULL))) {
+        SX_LOG_ERR("Invalid sai samplepacket port id %" PRIx64 "\n", key->object_id);
+        SX_LOG_EXIT();
+        return status;
+    }
+
+    assert(NULL != g_sai_db_ptr);
+
+    sai_db_write_lock();
+
+    if (SAI_STATUS_SUCCESS !=
+        (status = mlnx_port_db_idx_get(sdk_samplepacket_port_id, &sai_port_db_idx))) {
+        SX_LOG_ERR("Cannot find sdk port %d in sai port db\n", sdk_samplepacket_port_id);
+        goto cleanup;
+    }
+
+    if (SAI_NULL_OBJECT_ID == value->oid) {
+        sdk_cmd = SX_ACCESS_CMD_DELETE;
+        if (MLNX_INVALID_SAMPLEPACKET_SESSION ==
+            g_sai_db_ptr->ports_db[sai_port_db_idx].internal_ingress_samplepacket_obj_idx) {
+            SX_LOG_DBG("No internal ingress samplepacket object has been associated to sdk samplepacket port id %d\n",
+                       sdk_samplepacket_port_id);
+            status = SAI_STATUS_SUCCESS;
+            goto cleanup;
+        } else if (SAI_STATUS_SUCCESS !=
+                   (status =
+                        (sdk_to_sai(sx_api_port_sflow_set(gh_sdk, sdk_cmd, sdk_samplepacket_port_id,
+                                                          &sdk_sflow_params))))) {
+            SX_LOG_ERR("Error disassociating sdk port id %d with internal samplepacket obj idx %d\n",
+                       sdk_samplepacket_port_id,
+                       g_sai_db_ptr->ports_db[sai_port_db_idx].internal_ingress_samplepacket_obj_idx);
+            goto cleanup;
+        }
+        SX_LOG_DBG("Successfully disassociated sdk port id %d with internal samplepacket obj idx %d\n",
+                   sdk_samplepacket_port_id,
+                   g_sai_db_ptr->ports_db[sai_port_db_idx].internal_ingress_samplepacket_obj_idx);
+        g_sai_db_ptr->ports_db[sai_port_db_idx].internal_ingress_samplepacket_obj_idx =
+            MLNX_INVALID_SAMPLEPACKET_SESSION;
+        status = SAI_STATUS_SUCCESS;
+        goto cleanup;
+    } else {
+        if (SAI_STATUS_SUCCESS !=
+            (status =
+                 mlnx_object_to_type(value->oid, SAI_OBJECT_TYPE_SAMPLEPACKET, &internal_samplepacket_obj_idx,
+                                     NULL))) {
+            SX_LOG_ERR("Invalid sai samplepacket obj idx %" PRIx64 "\n", value->oid);
+            goto cleanup;
+        }
+
+        if (MLNX_INVALID_SAMPLEPACKET_SESSION ==
+            g_sai_db_ptr->ports_db[sai_port_db_idx].internal_ingress_samplepacket_obj_idx) {
+            sdk_cmd = SX_ACCESS_CMD_ADD;
+        } else {
+            sdk_cmd = SX_ACCESS_CMD_EDIT;
+        }
+
+        sdk_sflow_params.ratio =
+            g_sai_db_ptr->mlnx_samplepacket_session[internal_samplepacket_obj_idx].sai_sample_rate;
+        sdk_sflow_params.deviation        = 0;
+        sdk_sflow_params.packet_types.uc  = true;
+        sdk_sflow_params.packet_types.mc  = true;
+        sdk_sflow_params.packet_types.bc  = true;
+        sdk_sflow_params.packet_types.uuc = true;
+        sdk_sflow_params.packet_types.umc = true;
+
+        if (SAI_STATUS_SUCCESS !=
+            (status =
+                 (sdk_to_sai(sx_api_port_sflow_set(gh_sdk, sdk_cmd, sdk_samplepacket_port_id, &sdk_sflow_params))))) {
+            SX_LOG_ERR("Error associating sdk port id %d with internal samplepacket obj idx %d\n",
+                       sdk_samplepacket_port_id,
+                       internal_samplepacket_obj_idx);
+            goto cleanup;
+        }
+
+        g_sai_db_ptr->ports_db[sai_port_db_idx].internal_ingress_samplepacket_obj_idx = internal_samplepacket_obj_idx;
+
+        status = SAI_STATUS_SUCCESS;
+        goto cleanup;
+    }
+
+cleanup:
+    sai_db_unlock();
+    SX_LOG_EXIT();
+    return status;
 }
 
 /** Port default Traffic class Mapping [sai_uint8_t], Default TC=0*/
-sai_status_t mlnx_port_qos_default_tc_get(_In_ const sai_object_key_t   *key,
-                                          _Inout_ sai_attribute_value_t *value,
-                                          _In_ uint32_t                  attr_index,
-                                          _Inout_ vendor_cache_t        *cache,
-                                          void                          *arg)
+static sai_status_t mlnx_port_qos_default_tc_get(_In_ const sai_object_key_t   *key,
+                                                 _Inout_ sai_attribute_value_t *value,
+                                                 _In_ uint32_t                  attr_index,
+                                                 _Inout_ vendor_cache_t        *cache,
+                                                 void                          *arg)
 {
     sai_status_t status;
 
@@ -1886,9 +2223,9 @@ sai_status_t mlnx_port_qos_default_tc_get(_In_ const sai_object_key_t   *key,
 }
 
 /** Port default Traffic class Mapping [sai_uint8_t], Default TC=0*/
-sai_status_t mlnx_port_qos_default_tc_set(_In_ const sai_object_key_t      *key,
-                                          _In_ const sai_attribute_value_t *value,
-                                          void                             *arg)
+static sai_status_t mlnx_port_qos_default_tc_set(_In_ const sai_object_key_t      *key,
+                                                 _In_ const sai_attribute_value_t *value,
+                                                 void                             *arg)
 {
     sai_status_t status;
     uint32_t     port_idx;
@@ -1979,11 +2316,11 @@ static sai_status_t db_port_qos_map_id_set(_In_ const sai_object_id_t port_id,
 }
 
 /** QoS Map Id [sai_object_id_t] */
-sai_status_t mlnx_port_qos_map_id_get(_In_ const sai_object_key_t   *key,
-                                      _Inout_ sai_attribute_value_t *value,
-                                      _In_ uint32_t                  attr_index,
-                                      _Inout_ vendor_cache_t        *cache,
-                                      void                          *arg)
+static sai_status_t mlnx_port_qos_map_id_get(_In_ const sai_object_key_t   *key,
+                                             _Inout_ sai_attribute_value_t *value,
+                                             _In_ uint32_t                  attr_index,
+                                             _Inout_ vendor_cache_t        *cache,
+                                             void                          *arg)
 {
     sai_qos_map_type_t qos_map_type = (sai_qos_map_type_t)arg;
     sai_status_t       status;
@@ -2102,7 +2439,7 @@ static sai_status_t mlnx_port_qos_map_trust_level_set(sai_object_id_t port, mlnx
 }
 
 /* db lock is needed */
-sai_status_t mlnx_port_qos_map_assign_dot1p_to_tc_color(sai_object_id_t port, mlnx_qos_map_t *qos_map)
+static sai_status_t mlnx_port_qos_map_assign_dot1p_to_tc_color(sai_object_id_t port, mlnx_qos_map_t *qos_map)
 {
     sx_port_log_id_t        port_id;
     sx_status_t             status;
@@ -2149,7 +2486,7 @@ sai_status_t mlnx_port_qos_map_assign_dot1p_to_tc_color(sai_object_id_t port, ml
     return SAI_STATUS_SUCCESS;
 }
 
-sai_status_t mlnx_port_qos_map_assign_dscp_to_tc_color(sai_object_id_t port, mlnx_qos_map_t *qos_map)
+static sai_status_t mlnx_port_qos_map_assign_dscp_to_tc_color(sai_object_id_t port, mlnx_qos_map_t *qos_map)
 {
     sx_port_log_id_t        port_id;
     sx_status_t             status;
@@ -2196,7 +2533,7 @@ sai_status_t mlnx_port_qos_map_assign_dscp_to_tc_color(sai_object_id_t port, mln
     return SAI_STATUS_SUCCESS;
 }
 
-sai_status_t mlnx_port_qos_map_assign_tc_to_queue(sai_object_id_t port, mlnx_qos_map_t *qos_map)
+static sai_status_t mlnx_port_qos_map_assign_tc_to_queue(sai_object_id_t port, mlnx_qos_map_t *qos_map)
 {
     sx_port_log_id_t port_id;
     sx_status_t      status;
@@ -2227,7 +2564,7 @@ sai_status_t mlnx_port_qos_map_assign_tc_to_queue(sai_object_id_t port, mlnx_qos
     return SAI_STATUS_SUCCESS;
 }
 
-sai_status_t mlnx_port_qos_map_assign_tc_color_to_dscp(sai_object_id_t port, mlnx_qos_map_t *qos_map)
+static sai_status_t mlnx_port_qos_map_assign_tc_color_to_dscp(sai_object_id_t port, mlnx_qos_map_t *qos_map)
 {
     sx_port_log_id_t port_id;
     sx_status_t      status;
@@ -2251,7 +2588,7 @@ sai_status_t mlnx_port_qos_map_assign_tc_color_to_dscp(sai_object_id_t port, mln
     return SAI_STATUS_SUCCESS;
 }
 
-sai_status_t mlnx_port_qos_map_assign_tc_color_to_dot1p(sai_object_id_t port, mlnx_qos_map_t *qos_map)
+static sai_status_t mlnx_port_qos_map_assign_tc_color_to_dot1p(sai_object_id_t port, mlnx_qos_map_t *qos_map)
 {
     sx_port_log_id_t port_id;
     sx_status_t      status;
@@ -2274,7 +2611,7 @@ sai_status_t mlnx_port_qos_map_assign_tc_color_to_dot1p(sai_object_id_t port, ml
     return SAI_STATUS_SUCCESS;
 }
 
-sai_status_t mlnx_port_qos_map_assign_tc_to_pg(sai_object_id_t port, mlnx_qos_map_t *qos_map)
+static sai_status_t mlnx_port_qos_map_assign_tc_to_pg(sai_object_id_t port, mlnx_qos_map_t *qos_map)
 {
     sx_cos_port_prio_buff_t prio_buff;
     sx_port_log_id_t        port_id;
@@ -2308,7 +2645,7 @@ sai_status_t mlnx_port_qos_map_assign_tc_to_pg(sai_object_id_t port, mlnx_qos_ma
     return SAI_STATUS_SUCCESS;
 }
 
-sai_status_t mlnx_port_qos_map_assign_pfc_to_pg(sai_object_id_t port, mlnx_qos_map_t *qos_map)
+static sai_status_t mlnx_port_qos_map_assign_pfc_to_pg(sai_object_id_t port, mlnx_qos_map_t *qos_map)
 {
     sx_cos_port_prio_buff_t prio_buff;
     sx_port_log_id_t        port_id;
@@ -2358,7 +2695,7 @@ sai_status_t mlnx_port_qos_map_assign_pfc_to_pg(sai_object_id_t port, mlnx_qos_m
     return status;
 }
 
-sai_status_t mlnx_port_qos_map_assign_pfc_to_queue(sai_object_id_t port, mlnx_qos_map_t *qos_map)
+static sai_status_t mlnx_port_qos_map_assign_pfc_to_queue(sai_object_id_t port, mlnx_qos_map_t *qos_map)
 {
     sx_cos_priority_t  prios[SXD_COS_PORT_PRIO_MAX];
     sx_cos_ieee_prio_t ieees[SXD_COS_PORT_PRIO_MAX];
@@ -2582,7 +2919,7 @@ sai_status_t mlnx_port_tc_set(_In_ const sai_object_id_t port, _In_ const uint8_
  *    SAI_STATUS_SUCCESS on success
  *    Failure status code on error
  */
-sai_status_t mlnx_port_tc_get(_In_ const sai_object_id_t port, _Out_ uint8_t *tc)
+static sai_status_t mlnx_port_tc_get(_In_ const sai_object_id_t port, _Out_ uint8_t *tc)
 {
     sx_port_log_id_t port_id;
     sai_status_t     status;
@@ -2602,9 +2939,9 @@ sai_status_t mlnx_port_tc_get(_In_ const sai_object_id_t port, _Out_ uint8_t *tc
 }
 
 /** QoS Map Id [sai_object_id_t] */
-sai_status_t mlnx_port_qos_map_id_set(_In_ const sai_object_key_t      *key,
-                                      _In_ const sai_attribute_value_t *value,
-                                      void                             *arg)
+static sai_status_t mlnx_port_qos_map_id_set(_In_ const sai_object_key_t      *key,
+                                             _In_ const sai_attribute_value_t *value,
+                                             void                             *arg)
 {
     sai_qos_map_type_t qos_map_type = (sai_qos_map_type_t)arg;
     sai_status_t       status;
@@ -2636,11 +2973,11 @@ out:
 
 /** bit vector enable/disable port PFC [sai_uint8_t].
  * Valid from bit 0 to bit 7 */
-sai_status_t mlnx_port_pfc_control_get(_In_ const sai_object_key_t   *key,
-                                       _Inout_ sai_attribute_value_t *value,
-                                       _In_ uint32_t                  attr_index,
-                                       _Inout_ vendor_cache_t        *cache,
-                                       void                          *arg)
+static sai_status_t mlnx_port_pfc_control_get(_In_ const sai_object_key_t   *key,
+                                              _Inout_ sai_attribute_value_t *value,
+                                              _In_ uint32_t                  attr_index,
+                                              _Inout_ vendor_cache_t        *cache,
+                                              void                          *arg)
 {
     sx_port_log_id_t port_id;
     uint8_t          pfc_ctrl_map = 0;
@@ -2677,9 +3014,9 @@ sai_status_t mlnx_port_pfc_control_get(_In_ const sai_object_key_t   *key,
 
 /** bit vector enable/disable port PFC [sai_uint8_t].
  * Valid from bit 0 to bit 7 */
-sai_status_t mlnx_port_pfc_control_set(_In_ const sai_object_key_t      *key,
-                                       _In_ const sai_attribute_value_t *value,
-                                       void                             *arg)
+static sai_status_t mlnx_port_pfc_control_set(_In_ const sai_object_key_t      *key,
+                                              _In_ const sai_attribute_value_t *value,
+                                              void                             *arg)
 {
     sx_port_log_id_t port_id;
     sai_status_t     status;
@@ -2712,11 +3049,11 @@ sai_status_t mlnx_port_pfc_control_set(_In_ const sai_object_key_t      *key,
 }
 
 /* Get WRED profile set to a port */
-sai_status_t mlnx_port_wred_get(_In_ const sai_object_key_t   *key,
-                                _Inout_ sai_attribute_value_t *value,
-                                _In_ uint32_t                  attr_index,
-                                _Inout_ vendor_cache_t        *cache,
-                                void                          *arg)
+static sai_status_t mlnx_port_wred_get(_In_ const sai_object_key_t   *key,
+                                       _Inout_ sai_attribute_value_t *value,
+                                       _In_ uint32_t                  attr_index,
+                                       _Inout_ vendor_cache_t        *cache,
+                                       void                          *arg)
 {
     sai_status_t     status      = SAI_STATUS_SUCCESS;
     sai_object_id_t  wred_id_val = SAI_NULL_OBJECT_ID;
@@ -2740,11 +3077,11 @@ sai_status_t mlnx_port_wred_get(_In_ const sai_object_key_t   *key,
 }
 
 /* Get number of queues for the port */
-sai_status_t mlnx_port_queue_num_get(_In_ const sai_object_key_t   *key,
-                                     _Inout_ sai_attribute_value_t *value,
-                                     _In_ uint32_t                  attr_index,
-                                     _Inout_ vendor_cache_t        *cache,
-                                     void                          *arg)
+static sai_status_t mlnx_port_queue_num_get(_In_ const sai_object_key_t   *key,
+                                            _Inout_ sai_attribute_value_t *value,
+                                            _In_ uint32_t                  attr_index,
+                                            _Inout_ vendor_cache_t        *cache,
+                                            void                          *arg)
 {
     sai_status_t     status = SAI_STATUS_SUCCESS;
     sx_port_log_id_t port_id;
@@ -2762,16 +3099,16 @@ sai_status_t mlnx_port_queue_num_get(_In_ const sai_object_key_t   *key,
 }
 
 /* Get list of queues for the port */
-sai_status_t mlnx_port_queue_list_get(_In_ const sai_object_key_t   *key,
-                                      _Inout_ sai_attribute_value_t *value,
-                                      _In_ uint32_t                  attr_index,
-                                      _Inout_ vendor_cache_t        *cache,
-                                      void                          *arg)
+static sai_status_t mlnx_port_queue_list_get(_In_ const sai_object_key_t   *key,
+                                             _Inout_ sai_attribute_value_t *value,
+                                             _In_ uint32_t                  attr_index,
+                                             _Inout_ vendor_cache_t        *cache,
+                                             void                          *arg)
 {
-    sai_status_t        status = SAI_STATUS_SUCCESS;
-    sx_port_log_id_t    port_id;
-    uint32_t            ii = 0;
-    sai_object_id_t     *port_queues;
+    sai_status_t     status = SAI_STATUS_SUCCESS;
+    sx_port_log_id_t port_id;
+    uint32_t         ii = 0;
+    sai_object_id_t *port_queues;
 
     SX_LOG_ENTER();
 
@@ -2782,8 +3119,7 @@ sai_status_t mlnx_port_queue_list_get(_In_ const sai_object_key_t   *key,
     port_queues = malloc(sizeof(sai_object_id_t) * (g_resource_limits.cos_port_ets_traffic_class_max + 1));
 
     for (ii = 0; ii <= g_resource_limits.cos_port_ets_traffic_class_max; ii++) {
-        if (SAI_STATUS_SUCCESS != (status = mlnx_create_queue(port_id, ii, &port_queues[ii])))
-        {
+        if (SAI_STATUS_SUCCESS != (status = mlnx_create_queue(port_id, ii, &port_queues[ii]))) {
             SX_LOG_ERR("Failed to create SAI object for port 0x%x TC = %u", port_id, ii);
             goto out;
         }
@@ -2799,8 +3135,8 @@ out:
 
 static uint32_t sched_groups_count(mlnx_qos_port_config_t *port)
 {
-    uint32_t                count = 0;
-    uint32_t                ii;
+    uint32_t count = 0;
+    uint32_t ii;
 
     for (ii = 0; ii < MAX_SCHED_LEVELS; ii++) {
         count += port->sched_hierarchy.groups_count[ii];
@@ -2810,11 +3146,11 @@ static uint32_t sched_groups_count(mlnx_qos_port_config_t *port)
 }
 
 /** Number of Scheduler groups on port [uint32_t]*/
-sai_status_t mlnx_port_sched_groups_num_get(_In_ const sai_object_key_t   *key,
-                                            _Inout_ sai_attribute_value_t *value,
-                                            _In_ uint32_t                  attr_index,
-                                            _Inout_ vendor_cache_t        *cache,
-                                            void                          *arg)
+static sai_status_t mlnx_port_sched_groups_num_get(_In_ const sai_object_key_t   *key,
+                                                   _Inout_ sai_attribute_value_t *value,
+                                                   _In_ uint32_t                  attr_index,
+                                                   _Inout_ vendor_cache_t        *cache,
+                                                   void                          *arg)
 {
     sai_status_t            status;
     sx_port_log_id_t        port_id;
@@ -2843,17 +3179,17 @@ out:
 }
 
 /** List of Scheduler groups for the port[sai_object_list_t] */
-sai_status_t mlnx_port_sched_groups_list_get(_In_ const sai_object_key_t   *key,
-                                             _Inout_ sai_attribute_value_t *value,
-                                             _In_ uint32_t                  attr_index,
-                                             _Inout_ vendor_cache_t        *cache,
-                                             void                          *arg)
+static sai_status_t mlnx_port_sched_groups_list_get(_In_ const sai_object_key_t   *key,
+                                                    _Inout_ sai_attribute_value_t *value,
+                                                    _In_ uint32_t                  attr_index,
+                                                    _Inout_ vendor_cache_t        *cache,
+                                                    void                          *arg)
 {
-    sai_status_t              status = SAI_STATUS_SUCCESS;
-    mlnx_qos_port_config_t   *qos_cfg;
-    sx_port_log_id_t          port_id;
-    uint32_t                  lvl, idx, count;
-    sai_object_id_t          *groups = NULL;
+    sai_status_t            status = SAI_STATUS_SUCCESS;
+    mlnx_qos_port_config_t *qos_cfg;
+    sx_port_log_id_t        port_id;
+    uint32_t                lvl, idx, count;
+    sai_object_id_t        *groups = NULL;
 
     SX_LOG_ENTER();
 
@@ -2951,10 +3287,18 @@ static void port_key_to_str(_In_ sai_object_id_t port_id, _Out_ char *key_str)
 {
     uint32_t port;
 
-    if (SAI_STATUS_SUCCESS != mlnx_object_to_type(port_id, SAI_OBJECT_TYPE_PORT, &port, NULL)) {
-        snprintf(key_str, MAX_KEY_STR_LEN, "invalid port");
+    if (SAI_OBJECT_TYPE_LAG == sai_object_type_query(port_id)) {
+        if (SAI_STATUS_SUCCESS != mlnx_object_to_type(port_id, SAI_OBJECT_TYPE_LAG, &port, NULL)) {
+            snprintf(key_str, MAX_KEY_STR_LEN, "invalid lag");
+        } else {
+            snprintf(key_str, MAX_KEY_STR_LEN, "lag %x", port);
+        }
     } else {
-        snprintf(key_str, MAX_KEY_STR_LEN, "port %x", port);
+        if (SAI_STATUS_SUCCESS != mlnx_object_to_type(port_id, SAI_OBJECT_TYPE_PORT, &port, NULL)) {
+            snprintf(key_str, MAX_KEY_STR_LEN, "invalid port");
+        } else {
+            snprintf(key_str, MAX_KEY_STR_LEN, "port %x", port);
+        }
     }
 }
 
@@ -2970,11 +3314,11 @@ static void port_key_to_str(_In_ sai_object_id_t port_id, _Out_ char *key_str)
  *    SAI_STATUS_SUCCESS on success
  *    Failure status code on error
  */
-sai_status_t mlnx_set_port_attribute(_In_ sai_object_id_t port_id, _In_ const sai_attribute_t *attr)
+static sai_status_t mlnx_set_port_attribute(_In_ sai_object_id_t port_id, _In_ const sai_attribute_t *attr)
 {
     const sai_object_key_t key = { .object_id = port_id };
     char                   key_str[MAX_KEY_STR_LEN];
-    sai_status_t sai_status;
+    sai_status_t           sai_status;
 
     SX_LOG_ENTER();
 
@@ -2998,13 +3342,13 @@ sai_status_t mlnx_set_port_attribute(_In_ sai_object_id_t port_id, _In_ const sa
  *    SAI_STATUS_SUCCESS on success
  *    Failure status code on error
  */
-sai_status_t mlnx_get_port_attribute(_In_ sai_object_id_t     port_id,
-                                     _In_ uint32_t            attr_count,
-                                     _Inout_ sai_attribute_t *attr_list)
+static sai_status_t mlnx_get_port_attribute(_In_ sai_object_id_t     port_id,
+                                            _In_ uint32_t            attr_count,
+                                            _Inout_ sai_attribute_t *attr_list)
 {
     const sai_object_key_t key = { .object_id = port_id };
     char                   key_str[MAX_KEY_STR_LEN];
-    sai_status_t sai_status;
+    sai_status_t           sai_status;
 
     SX_LOG_ENTER();
 
@@ -3028,14 +3372,16 @@ sai_status_t mlnx_get_port_attribute(_In_ sai_object_id_t     port_id,
  *    SAI_STATUS_SUCCESS on success
  *    Failure status code on error
  */
-sai_status_t mlnx_get_port_stats(_In_ sai_object_id_t                port_id,
-                                 _In_ const sai_port_stat_counter_t *counter_ids,
-                                 _In_ uint32_t                       number_of_counters,
-                                 _Out_ uint64_t                     *counters)
+static sai_status_t mlnx_get_port_stats(_In_ sai_object_id_t                port_id,
+                                        _In_ const sai_port_stat_counter_t *counter_ids,
+                                        _In_ uint32_t                       number_of_counters,
+                                        _Out_ uint64_t                     *counters)
 {
     sai_status_t                  status;
     sx_port_cntr_rfc_2863_t       cnts_2863;
     sx_port_cntr_rfc_2819_t       cnts_2819;
+    sx_port_cntr_prio_t           cntr_prio;
+    sx_port_cntr_ieee_802_dot_3_t cntr_802;
     sx_cos_redecn_port_counters_t redecn_cnts;
     uint32_t                      ii, port_data;
     uint32_t                      iter = 0;
@@ -3071,6 +3417,12 @@ sai_status_t mlnx_get_port_stats(_In_ sai_object_id_t                port_id,
     if (SX_STATUS_SUCCESS !=
         (status = sx_api_port_counter_rfc_2819_get(gh_sdk, SX_ACCESS_CMD_READ, port_data, &cnts_2819))) {
         SX_LOG_ERR("Failed to get port rfc 2819 counters - %s.\n", SX_STATUS_MSG(status));
+        return sdk_to_sai(status);
+    }
+
+    if (SX_STATUS_SUCCESS !=
+        (status = sx_api_port_counter_ieee_802_dot_3_get(gh_sdk, SX_ACCESS_CMD_READ, port_data, &cntr_802))) {
+        SX_LOG_ERR("Failed to get port ieee 802 3 counters - %s.\n", SX_STATUS_MSG(status));
         return sdk_to_sai(status);
     }
 
@@ -3204,6 +3556,14 @@ sai_status_t mlnx_get_port_stats(_In_ sai_object_id_t                port_id,
             counters[ii] = cnts_2819.ether_stats_crc_align_errors;
             break;
 
+        case SAI_PORT_STAT_PAUSE_RX_PKTS:
+            counters[ii] = cntr_802.a_pause_mac_ctrl_frames_received;
+            break;
+
+        case SAI_PORT_STAT_PAUSE_TX_PKTS:
+            counters[ii] = cntr_802.a_pause_mac_ctrl_frames_transmitted;
+            break;
+
         case SAI_PORT_STAT_GREEN_DISCARD_DROPPED_PACKETS:
         case SAI_PORT_STAT_GREEN_DISCARD_DROPPED_BYTES:
         case SAI_PORT_STAT_YELLOW_DISCARD_DROPPED_PACKETS:
@@ -3225,6 +3585,49 @@ sai_status_t mlnx_get_port_stats(_In_ sai_object_id_t                port_id,
             for (iter = 0; iter < RM_API_COS_TRAFFIC_CLASS_NUM; iter++) {
                 counters[ii] += redecn_cnts.tc_red_dropped_packets[iter];
             }
+            break;
+
+        case SAI_PORT_STAT_PFC_0_RX_PKTS:
+        case SAI_PORT_STAT_PFC_1_RX_PKTS:
+        case SAI_PORT_STAT_PFC_2_RX_PKTS:
+        case SAI_PORT_STAT_PFC_3_RX_PKTS:
+        case SAI_PORT_STAT_PFC_4_RX_PKTS:
+        case SAI_PORT_STAT_PFC_5_RX_PKTS:
+        case SAI_PORT_STAT_PFC_6_RX_PKTS:
+        case SAI_PORT_STAT_PFC_7_RX_PKTS:
+            if (SX_STATUS_SUCCESS !=
+                (status = sx_api_port_counter_prio_get(gh_sdk, SX_ACCESS_CMD_READ, port_data,
+                                                       /* Extract Prio i from SAI RXi,TXi */
+                                                       SX_PORT_PRIO_ID_0 +
+                                                       (counter_ids[ii] - SAI_PORT_STAT_PFC_0_RX_PKTS) / 2,
+                                                       &cntr_prio))) {
+                SX_LOG_ERR("Failed to get port prio %d counters - %s.\n",
+                           SX_PORT_PRIO_ID_0 + (counter_ids[ii] - SAI_PORT_STAT_PFC_0_RX_PKTS) / 2,
+                           SX_STATUS_MSG(status));
+                return sdk_to_sai(status);
+            }
+            counters[ii] = cntr_prio.rx_pause;
+            break;
+
+        case SAI_PORT_STAT_PFC_0_TX_PKTS:
+        case SAI_PORT_STAT_PFC_1_TX_PKTS:
+        case SAI_PORT_STAT_PFC_2_TX_PKTS:
+        case SAI_PORT_STAT_PFC_3_TX_PKTS:
+        case SAI_PORT_STAT_PFC_4_TX_PKTS:
+        case SAI_PORT_STAT_PFC_5_TX_PKTS:
+        case SAI_PORT_STAT_PFC_6_TX_PKTS:
+        case SAI_PORT_STAT_PFC_7_TX_PKTS:
+            if (SX_STATUS_SUCCESS !=
+                (status = sx_api_port_counter_prio_get(gh_sdk, SX_ACCESS_CMD_READ, port_data,
+                                                       SX_PORT_PRIO_ID_0 +
+                                                       (counter_ids[ii] - SAI_PORT_STAT_PFC_0_TX_PKTS) / 2,
+                                                       &cntr_prio))) {
+                SX_LOG_ERR("Failed to get port prio %d counters - %s.\n",
+                           SX_PORT_PRIO_ID_0 + (counter_ids[ii] - SAI_PORT_STAT_PFC_0_TX_PKTS) / 2,
+                           SX_STATUS_MSG(status));
+                return sdk_to_sai(status);
+            }
+            counters[ii] = cntr_prio.tx_pause;
             break;
 
         case SAI_PORT_STAT_IF_IN_VLAN_DISCARDS:
@@ -3265,6 +3668,10 @@ sai_status_t mlnx_get_port_stats(_In_ sai_object_id_t                port_id,
         case SAI_PORT_STAT_ETHER_OUT_PKTS_256_TO_511_OCTETS:
         case SAI_PORT_STAT_ETHER_OUT_PKTS_512_TO_1023_OCTETS:
         case SAI_PORT_STAT_ETHER_OUT_PKTS_1024_TO_1518_OCTETS:
+        case SAI_PORT_STAT_CURR_OCCUPANCY_BYTES:
+        case SAI_PORT_STAT_WATERMARK_BYTES:
+        case SAI_PORT_STAT_SHARED_CURR_OCCUPANCY_BYTES:
+        case SAI_PORT_STAT_SHARED_WATERMARK_BYTES:
             SX_LOG_ERR("Port counter %d set item %u not implemented\n", counter_ids[ii], ii);
             return SAI_STATUS_NOT_IMPLEMENTED;
 
@@ -3291,9 +3698,9 @@ sai_status_t mlnx_get_port_stats(_In_ sai_object_id_t                port_id,
  *    SAI_STATUS_SUCCESS on success
  *    Failure status code on error
  */
-sai_status_t mlnx_clear_port_stats(_In_ sai_object_id_t                port_id,
-                                   _In_ const sai_port_stat_counter_t *counter_ids,
-                                   _In_ uint32_t                       number_of_counters)
+static sai_status_t mlnx_clear_port_stats(_In_ sai_object_id_t                port_id,
+                                          _In_ const sai_port_stat_counter_t *counter_ids,
+                                          _In_ uint32_t                       number_of_counters)
 {
     return SAI_STATUS_NOT_IMPLEMENTED;
 }
@@ -3309,7 +3716,7 @@ sai_status_t mlnx_clear_port_stats(_In_ sai_object_id_t                port_id,
  *    SAI_STATUS_SUCCESS on success
  *    Failure status code on error
  */
-sai_status_t mlnx_clear_port_all_stats(_In_ sai_object_id_t port_id)
+static sai_status_t mlnx_clear_port_all_stats(_In_ sai_object_id_t port_id)
 {
     sai_status_t status;
     uint32_t     port_data;
@@ -3349,7 +3756,7 @@ sai_status_t mlnx_port_log_set(sx_verbosity_level_t level)
 sai_status_t mlnx_port_qos_cfg_lookup(sx_port_log_id_t log_port_id, mlnx_qos_port_config_t **qos_cfg)
 {
     mlnx_qos_port_config_t *_qos_cfg;
-    uint32_t ii;
+    uint32_t                ii;
 
     qos_port_foreach(_qos_cfg, ii) {
         if (_qos_cfg->log_port_id == log_port_id) {
@@ -3364,22 +3771,20 @@ sai_status_t mlnx_port_qos_cfg_lookup(sx_port_log_id_t log_port_id, mlnx_qos_por
 
 /** Ingress buffer profiles for port [sai_object_list_t]
  *  There can be up to SAI_SWITCH_ATTR_INGRESS_BUFFER_POOL_NUM profiles */
-static sai_status_t mlnx_port_ingress_buffer_profile_list_get(
-    _In_ const sai_object_key_t   *key,
-    _Inout_ sai_attribute_value_t *value,
-    _In_ uint32_t                  attr_index,
-    _Inout_ vendor_cache_t        *cache,
-    void                          *arg)
+static sai_status_t mlnx_port_ingress_buffer_profile_list_get(_In_ const sai_object_key_t   *key,
+                                                              _Inout_ sai_attribute_value_t *value,
+                                                              _In_ uint32_t                  attr_index,
+                                                              _Inout_ vendor_cache_t        *cache,
+                                                              void                          *arg)
 {
     return mlnx_buffer_port_profile_list_get(key->object_id, value, true);
 }
 
 /** Ingress buffer profiles for port [sai_object_list_t]
  *  There can be up to SAI_SWITCH_ATTR_INGRESS_BUFFER_POOL_NUM profiles */
-static sai_status_t mlnx_port_ingress_buffer_profile_list_set(
-    _In_ const sai_object_key_t      *key,
-    _In_ const sai_attribute_value_t *value,
-    void                             *arg)
+static sai_status_t mlnx_port_ingress_buffer_profile_list_set(_In_ const sai_object_key_t      *key,
+                                                              _In_ const sai_attribute_value_t *value,
+                                                              void                             *arg)
 {
     return mlnx_buffer_port_profile_list_set(key->object_id, value, true);
 }
@@ -3387,26 +3792,25 @@ static sai_status_t mlnx_port_ingress_buffer_profile_list_set(
 /** Egress buffer profiles for port [sai_object_list_t]
  *  There can be up to SAI_SWITCH_ATTR_EGRESS_BUFFER_POOL_NUM profiles */
 static sai_status_t mlnx_port_egress_buffer_profile_list_get(_In_ const sai_object_key_t   *key,
-                                        _Inout_ sai_attribute_value_t *value,
-                                        _In_ uint32_t                  attr_index,
-                                        _Inout_ vendor_cache_t        *cache,
-                                        void                          *arg)
+                                                             _Inout_ sai_attribute_value_t *value,
+                                                             _In_ uint32_t                  attr_index,
+                                                             _Inout_ vendor_cache_t        *cache,
+                                                             void                          *arg)
 {
     return mlnx_buffer_port_profile_list_get(key->object_id, value, false);
 }
 
 /** Egress buffer profiles for port [sai_object_list_t]
  *  There can be up to SAI_SWITCH_ATTR_EGRESS_BUFFER_POOL_NUM profiles */
-static sai_status_t mlnx_port_egress_buffer_profile_list_set(
-    _In_ const sai_object_key_t      *key,
-    _In_ const sai_attribute_value_t *value,
-    void                             *arg)
+static sai_status_t mlnx_port_egress_buffer_profile_list_set(_In_ const sai_object_key_t      *key,
+                                                             _In_ const sai_attribute_value_t *value,
+                                                             void                             *arg)
 {
     return mlnx_buffer_port_profile_list_set(key->object_id, value, false);
 }
 
 
-const sai_port_api_t port_api = {
+const sai_port_api_t mlnx_port_api = {
     mlnx_set_port_attribute,
     mlnx_get_port_attribute,
     mlnx_get_port_stats,

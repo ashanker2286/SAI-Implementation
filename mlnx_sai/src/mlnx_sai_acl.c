@@ -53,22 +53,14 @@ static sai_status_t acl_db_bind_acl_to_ports(sx_acl_direction_t direction,
                                              sx_acl_id_t        acl_id,
                                              sx_port_log_id_t  *port_arr,
                                              uint32_t           port_num);
-
-sai_status_t delete_acl_group(_In_ uint32_t stage);
-
-sai_status_t mlnx_set_acl_entry_attribute(_In_ sai_object_id_t acl_entry_id, _In_ const sai_attribute_t *attr);
-
-sai_status_t mlnx_get_acl_entry_attribute(_In_ sai_object_id_t   acl_entry_id,
-                                          _In_ uint32_t          attr_count,
-                                          _Out_ sai_attribute_t *attr_list);
-
-sai_status_t mlnx_delete_acl_counter(_In_ sai_object_id_t acl_counter_id);
-
-sai_status_t mlnx_delete_acl_table(_In_ sai_object_id_t acl_table_id);
-
-
-sai_status_t mlnx_delete_acl_entry(_In_ sai_object_id_t acl_entry_id);
-
+static sai_status_t delete_acl_group(_In_ uint32_t stage);
+static sai_status_t mlnx_set_acl_entry_attribute(_In_ sai_object_id_t acl_entry_id, _In_ const sai_attribute_t *attr);
+static sai_status_t mlnx_get_acl_entry_attribute(_In_ sai_object_id_t   acl_entry_id,
+                                                 _In_ uint32_t          attr_count,
+                                                 _Out_ sai_attribute_t *attr_list);
+static sai_status_t mlnx_delete_acl_counter(_In_ sai_object_id_t acl_counter_id);
+static sai_status_t mlnx_delete_acl_table(_In_ sai_object_id_t acl_table_id);
+static sai_status_t mlnx_delete_acl_entry(_In_ sai_object_id_t acl_entry_id);
 static sai_status_t sort_tables_in_group(_In_ uint32_t        stage,
                                          _In_ uint32_t        priority,
                                          _In_ uint32_t        acl_id,
@@ -330,9 +322,9 @@ static const sai_attribute_entry_t acl_table_attribs[] = {
       "Vlan User Meta Data", SAI_ATTR_VAL_TYPE_BOOL },
     { SAI_ACL_TABLE_ATTR_FIELD_ACL_USER_META, false, true, false, true,
       "Meta Data carried from previous ACL Stage", SAI_ATTR_VAL_TYPE_BOOL },
-    { SAI_ACL_TABLE_ATTR_FIELD_FDB_DST_NPU_META_HIT, false, true, false, false,
+    { SAI_ACL_TABLE_ATTR_FIELD_FDB_NPU_META_DST_HIT, false, true, false, false,
       "DST MAC address match in FDB", SAI_ATTR_VAL_TYPE_BOOL },
-    { SAI_ACL_TABLE_ATTR_FIELD_NEIGHBOR_DST_NPU_META_HIT, false, true, false, false,
+    { SAI_ACL_TABLE_ATTR_FIELD_NEIGHBOR_NPU_META_DST_HIT, false, true, false, false,
       "DST IP address match in neighbor table", SAI_ATTR_VAL_TYPE_BOOL },
     { END_FUNCTIONALITY_ATTRIBS_ID, false, false, false, false,
       "", SAI_ATTR_VAL_TYPE_UNDETERMINED }
@@ -485,10 +477,22 @@ static const sai_attribute_entry_t acl_entry_attribs[] = {
     { SAI_ACL_ENTRY_ATTR_ACTION_EGRESS_SAMPLEPACKET_ENABLE, false, false, false, false,
       "Set egress packet sampling", SAI_ATTR_VAL_TYPE_ACLACTION_OID },
     { SAI_ACL_ENTRY_ATTR_ACTION_SET_CPU_QUEUE, false, false, false, false,
-      "Set CPU Queue for CPU bound traffic", SAI_ATTR_VAL_TYPE_ACLACTION_OID },
+      "Set CPU Queue", SAI_ATTR_VAL_TYPE_ACLACTION_OID },
     { SAI_ACL_ENTRY_ATTR_ACTION_SET_ACL_META_DATA, false, true, true, true,
-      "Set Meta Data to carry forward to next ACL Stage", SAI_ATTR_VAL_TYPE_ACLACTION_U32 },
+      "Set Meta Data", SAI_ATTR_VAL_TYPE_ACLACTION_U32 },
+    { SAI_ACL_ENTRY_ATTR_ACTION_EGRESS_BLOCK_PORT_LIST, false, true, true, true,
+      "Egress block port list", SAI_ATTR_VAL_TYPE_ACLACTION_OBJLIST },
+    { SAI_ACL_ENTRY_ATTR_ACTION_SET_USER_TRAP_ID, false, true, true, true,
+      "Set user def trap ID", SAI_ATTR_VAL_TYPE_ACLACTION_U32 },
     { END_FUNCTIONALITY_ATTRIBS_ID,  false, false, false, false,
+      "", SAI_ATTR_VAL_TYPE_UNDETERMINED }
+};
+static const sai_attribute_entry_t acl_range_attribs[] = {
+    { SAI_ACL_RANGE_ATTR_TYPE, true, true, false, true,
+      "ACL range type", SAI_ATTR_VAL_TYPE_S32},
+    { SAI_ACL_RANGE_ATTR_LIMIT, true, true, false, true,
+      "ACL range limit", SAI_ATTR_VAL_TYPE_U32RANGE },
+    { END_FUNCTIONALITY_ATTRIBS_ID, false, false, false, false,
       "", SAI_ATTR_VAL_TYPE_UNDETERMINED }
 };
 
@@ -745,12 +749,12 @@ static const sai_vendor_attribute_entry_t acl_table_vendor_attribs[] = {
       { true, false, false, true },
       mlnx_acl_table_fields_get, (void*)SAI_ACL_TABLE_ATTR_FIELD_ACL_USER_META,
       NULL, NULL },
-    { SAI_ACL_TABLE_ATTR_FIELD_FDB_DST_NPU_META_HIT,
+    { SAI_ACL_TABLE_ATTR_FIELD_FDB_NPU_META_DST_HIT,
       { false, false, false, false },
       { false, false, false, false },
       NULL, NULL,
       NULL, NULL },
-    { SAI_ACL_TABLE_ATTR_FIELD_NEIGHBOR_DST_NPU_META_HIT,
+    { SAI_ACL_TABLE_ATTR_FIELD_NEIGHBOR_NPU_META_DST_HIT,
       { false, false, false, false },
       { false, false, false, false },
       NULL, NULL,
@@ -1160,6 +1164,28 @@ static const sai_vendor_attribute_entry_t acl_entry_vendor_attribs[] = {
       { true, false, true, true},
       mlnx_acl_entry_action_get, (void*)SAI_ACL_ENTRY_ATTR_ACTION_SET_ACL_META_DATA,
       mlnx_acl_entry_action_set, (void*)SAI_ACL_ENTRY_ATTR_ACTION_SET_ACL_META_DATA },
+    { SAI_ACL_ENTRY_ATTR_ACTION_EGRESS_BLOCK_PORT_LIST,
+      { false, false, false, false},
+      { false, false, false, false},
+      NULL, NULL,
+      NULL, NULL },
+    { SAI_ACL_ENTRY_ATTR_ACTION_SET_USER_TRAP_ID,
+      { false, false, false, false},
+      { true, false, true, true},
+      NULL, NULL,
+      NULL, NULL },
+};
+static const sai_vendor_attribute_entry_t acl_range_vendor_attribs[] = {
+    { SAI_ACL_RANGE_ATTR_TYPE,
+      { true, false, false, false },
+      { true, false, false, true },
+      NULL, NULL,
+      NULL, NULL },
+    { SAI_ACL_RANGE_ATTR_LIMIT,
+      { true, false, false, false },
+      { true, false, false, true },
+      NULL, NULL,
+      NULL, NULL }
 };
 static const sai_attribute_entry_t        acl_counter_attribs[] = {
     { SAI_ACL_COUNTER_ATTR_TABLE_ID, true, true, false, false,
@@ -1202,8 +1228,7 @@ static const sai_vendor_attribute_entry_t acl_counter_vendor_attribs[] = {
       mlnx_acl_counter_get, (void*)SAI_ACL_COUNTER_ATTR_BYTES,
       mlnx_acl_counter_set, (void*)SAI_ACL_COUNTER_ATTR_BYTES }
 };
-
-sai_status_t delete_acl_group(_In_ uint32_t stage)
+static sai_status_t delete_acl_group(_In_ uint32_t stage)
 {
     sx_status_t     ret_status;
     sai_status_t    status = SAI_STATUS_SUCCESS;
@@ -1767,7 +1792,7 @@ out:
 }
 
 
-sai_status_t db_find_acl_entry_free_index(_Out_ uint32_t *free_index, _In_ uint32_t table_id)
+static sai_status_t db_find_acl_entry_free_index(_Out_ uint32_t *free_index, _In_ uint32_t table_id)
 {
     sai_status_t status;
     uint32_t     ii;
@@ -4637,7 +4662,7 @@ static sai_status_t mlnx_acl_entry_ports_set(_In_ const sai_object_key_t      *k
     }
 
     offset_max_count = (new_num_rules > num_rules) ? new_num_rules : num_rules;
-    offsets_list_p = (sx_flex_acl_rule_offset_t*)malloc(offset_max_count * sizeof(sx_flex_acl_rule_offset_t));
+    offsets_list_p   = (sx_flex_acl_rule_offset_t*)malloc(offset_max_count * sizeof(sx_flex_acl_rule_offset_t));
     if (offsets_list_p == NULL) {
         SX_LOG_ERR("ERROR: unable to allocate memory for offsets list\n");
         status = SAI_STATUS_NO_MEMORY;
@@ -6284,9 +6309,9 @@ static sai_status_t mlnx_acl_packet_actions_handler(_In_ sai_packet_action_t    
  *    Failure status code on error
  */
 
-sai_status_t mlnx_create_acl_entry(_Out_ sai_object_id_t     * acl_entry_id,
-                                   _In_ uint32_t               attr_count,
-                                   _In_ const sai_attribute_t *attr_list)
+static sai_status_t mlnx_create_acl_entry(_Out_ sai_object_id_t     * acl_entry_id,
+                                          _In_ uint32_t               attr_count,
+                                          _In_ const sai_attribute_t *attr_list)
 {
     sai_status_t                 status;
     sx_status_t                  ret_status;
@@ -6354,8 +6379,8 @@ sai_status_t mlnx_create_acl_entry(_Out_ sai_object_id_t     * acl_entry_id,
     uint32_t in_port_data, out_port_data, action_counter_data, action_set_policer_data, action_redirect_data;
     uint32_t port, ports_count = 0, port_counter = 0;
     uint32_t acl_table_id, acl_table_index;
-    uint32_t acl_entry_index, entry_id, counter_index = 0;
-    uint32_t num_rules = 0, rule_counter = 0;
+    uint32_t acl_entry_index = 0, entry_id = 0, counter_index = 0;
+    uint32_t num_rules       = 0, rule_counter = 0;
     uint32_t stage;
     uint32_t key_desc_index    = 0, acl_table_size = 0;
     uint16_t trap_id           = SX_TRAP_ID_ACL_MIN;
@@ -7555,9 +7580,9 @@ static sai_status_t sort_tables_in_group(_In_ uint32_t        stage,
  *    Failure status code on error
  */
 
-sai_status_t mlnx_create_acl_table(_Out_ sai_object_id_t     * acl_table_id,
-                                   _In_ uint32_t               attr_count,
-                                   _In_ const sai_attribute_t *attr_list)
+static sai_status_t mlnx_create_acl_table(_Out_ sai_object_id_t     * acl_table_id,
+                                          _In_ uint32_t               attr_count,
+                                          _In_ const sai_attribute_t *attr_list)
 {
     sai_status_t                 status;
     sx_status_t                  ret_status;
@@ -8102,7 +8127,7 @@ static void acl_entry_key_to_str(_In_ sai_object_id_t acl_entry_id, _Out_ char *
  *    SAI_STATUS_SUCCESS on success
  *    Failure status code on error
  */
-sai_status_t mlnx_set_acl_table_attribute(_In_ sai_object_id_t acl_table_id, _In_ const sai_attribute_t *attr)
+static sai_status_t mlnx_set_acl_table_attribute(_In_ sai_object_id_t acl_table_id, _In_ const sai_attribute_t *attr)
 {
     const sai_object_key_t key = { .object_id = acl_table_id };
     char                   key_str[MAX_KEY_STR_LEN];
@@ -8127,9 +8152,9 @@ sai_status_t mlnx_set_acl_table_attribute(_In_ sai_object_id_t acl_table_id, _In
  *    SAI_STATUS_SUCCESS on success
  *    Failure status code on error
  */
-sai_status_t mlnx_get_acl_table_attribute(_In_ sai_object_id_t   acl_table_id,
-                                          _In_ uint32_t          attr_count,
-                                          _Out_ sai_attribute_t *attr_list)
+static sai_status_t mlnx_get_acl_table_attribute(_In_ sai_object_id_t   acl_table_id,
+                                                 _In_ uint32_t          attr_count,
+                                                 _Out_ sai_attribute_t *attr_list)
 {
     const sai_object_key_t key = { .object_id = acl_table_id };
     char                   key_str[MAX_KEY_STR_LEN];
@@ -8165,7 +8190,8 @@ static void acl_counter_key_to_str(_In_ sai_object_id_t acl_counter_id, _Out_ ch
  *    SAI_STATUS_SUCCESS on success
  *    Failure status code on error
  */
-sai_status_t mlnx_set_acl_counter_attribute(_In_ sai_object_id_t acl_counter_id, _In_ const sai_attribute_t *attr)
+static sai_status_t mlnx_set_acl_counter_attribute(_In_ sai_object_id_t        acl_counter_id,
+                                                   _In_ const sai_attribute_t *attr)
 {
     const sai_object_key_t key = { .object_id = acl_counter_id };
     char                   key_str[MAX_KEY_STR_LEN];
@@ -8189,9 +8215,9 @@ sai_status_t mlnx_set_acl_counter_attribute(_In_ sai_object_id_t acl_counter_id,
  *    SAI_STATUS_SUCCESS on success
  *    Failure status code on error
  */
-sai_status_t mlnx_get_acl_counter_attribute(_In_ sai_object_id_t   acl_counter_id,
-                                            _In_ uint32_t          attr_count,
-                                            _Out_ sai_attribute_t *attr_list)
+static sai_status_t mlnx_get_acl_counter_attribute(_In_ sai_object_id_t   acl_counter_id,
+                                                   _In_ uint32_t          attr_count,
+                                                   _Out_ sai_attribute_t *attr_list)
 {
     const sai_object_key_t key = { .object_id = acl_counter_id };
     char                   key_str[MAX_KEY_STR_LEN];
@@ -8370,9 +8396,9 @@ static sai_status_t mlnx_acl_counter_flag_get(_In_ const sai_object_key_t   *key
  *    SAI_STATUS_SUCCESS on success
  *    Failure status code on error
  */
-sai_status_t mlnx_create_acl_counter(_Out_ sai_object_id_t      *acl_counter_id,
-                                     _In_ uint32_t               attr_count,
-                                     _In_ const sai_attribute_t *attr_list)
+static sai_status_t mlnx_create_acl_counter(_Out_ sai_object_id_t      *acl_counter_id,
+                                            _In_ uint32_t               attr_count,
+                                            _In_ const sai_attribute_t *attr_list)
 {
     sai_status_t                 status;
     sx_status_t                  ret_status;
@@ -8492,7 +8518,7 @@ out:
  *       Failure status code on error
  */
 
-sai_status_t mlnx_set_acl_entry_attribute(_In_ sai_object_id_t acl_entry_id, _In_ const sai_attribute_t *attr)
+static sai_status_t mlnx_set_acl_entry_attribute(_In_ sai_object_id_t acl_entry_id, _In_ const sai_attribute_t *attr)
 {
     const sai_object_key_t key = { .object_id = acl_entry_id };
     char                   key_str[MAX_KEY_STR_LEN];
@@ -8516,9 +8542,9 @@ sai_status_t mlnx_set_acl_entry_attribute(_In_ sai_object_id_t acl_entry_id, _In
  *    Failure status code on error
  */
 
-sai_status_t mlnx_get_acl_entry_attribute(_In_ sai_object_id_t   acl_entry_id,
-                                          _In_ uint32_t          attr_count,
-                                          _Out_ sai_attribute_t *attr_list)
+static sai_status_t mlnx_get_acl_entry_attribute(_In_ sai_object_id_t   acl_entry_id,
+                                                 _In_ uint32_t          attr_count,
+                                                 _Out_ sai_attribute_t *attr_list)
 {
     const sai_object_key_t key = { .object_id = acl_entry_id };
     char                   key_str[MAX_KEY_STR_LEN];
@@ -8540,7 +8566,7 @@ sai_status_t mlnx_get_acl_entry_attribute(_In_ sai_object_id_t   acl_entry_id,
  *       SAI_STATUS_SUCCESS on success
  *       Failure status code on error
  **/
-sai_status_t mlnx_delete_acl_entry(_In_ sai_object_id_t acl_entry_id)
+static sai_status_t mlnx_delete_acl_entry(_In_ sai_object_id_t acl_entry_id)
 {
     sx_status_t               ret_status;
     sai_status_t              status;
@@ -8708,7 +8734,7 @@ out:
  *    Failure status code on error
  */
 
-sai_status_t mlnx_delete_acl_table(_In_ sai_object_id_t acl_table_id)
+static sai_status_t mlnx_delete_acl_table(_In_ sai_object_id_t acl_table_id)
 {
     char                  key_str[MAX_KEY_STR_LEN];
     sx_acl_id_t           table_id, table_index;
@@ -8884,7 +8910,7 @@ out:
  *       Failure status code on error
  */
 
-sai_status_t mlnx_delete_acl_counter(_In_ sai_object_id_t acl_counter_id)
+static sai_status_t mlnx_delete_acl_counter(_In_ sai_object_id_t acl_counter_id)
 {
     sx_status_t            ret_status;
     char                   key_str[MAX_KEY_STR_LEN];
@@ -8956,7 +8982,104 @@ out:
     return status;
 }
 
-const sai_acl_api_t acl_api = {
+static void acl_range_key_to_str(_In_ sai_object_id_t acl_range_id, _Out_ char *key_str)
+{
+    uint32_t range_id;
+
+    if (SAI_STATUS_SUCCESS != mlnx_object_to_type(acl_range_id, SAI_OBJECT_TYPE_ACL_RANGE, &range_id, NULL)) {
+        snprintf(key_str, MAX_KEY_STR_LEN, "Invalid acl range id");
+    } else {
+        snprintf(key_str, MAX_KEY_STR_LEN, "ACL range [%u]", range_id);
+    }
+}
+
+/**
+ *   Routine Description:
+ *     @brief Create an ACL Range
+ *
+ *  Arguments:
+ *  @param[out] acl_range_id - the acl range id
+ *  @param[in] attr_count - number of attributes
+ *  @param[in] attr_list - array of attributes
+ *
+ *  Return Values:
+ *    @return  SAI_STATUS_SUCCESS on success
+ *             Failure status code on error
+ */
+static sai_status_t mlnx_create_acl_range(_Out_ sai_object_id_t     * acl_range_id,
+                                          _In_ uint32_t               attr_count,
+                                          _In_ const sai_attribute_t *attr_list)
+{
+    return SAI_STATUS_NOT_IMPLEMENTED;
+}
+
+/**
+ *  Routine Description:
+ *    @brief Remove an ACL Range
+ *
+ *  Arguments:
+ *    @param[in] acl_range_id - the acl range id
+ *
+ *  Return Values:
+ *    @return  SAI_STATUS_SUCCESS on success
+ *             Failure status code on error
+ */
+static sai_status_t mlnx_remove_acl_range(_In_ sai_object_id_t acl_range_id)
+{
+    return SAI_STATUS_NOT_IMPLEMENTED;
+}
+
+/**
+ * Routine Description:
+ *   @brief Set ACL range attribute
+ *
+ * Arguments:
+ *    @param[in] acl_range_id - the acl range id
+ *    @param[in] attr - attribute
+ *
+ * Return Values:
+ *    @return  SAI_STATUS_SUCCESS on success
+ *             Failure status code on error
+ */
+static sai_status_t mlnx_set_acl_range_attribute(_In_ sai_object_id_t acl_range_id, _In_ const sai_attribute_t *attr)
+{
+    const sai_object_key_t key = { .object_id = acl_range_id };
+    char                   key_str[MAX_KEY_STR_LEN];
+
+    SX_LOG_ENTER();
+
+    acl_range_key_to_str(acl_range_id, key_str);
+    return sai_set_attribute(&key, key_str, acl_range_attribs, acl_range_vendor_attribs, attr);
+}
+
+/**
+ * Routine Description:
+ *   @brief Get ACL range attribute
+ *
+ * Arguments:
+ *    @param[in] acl_range_id - acl range id
+ *    @param[in] attr_count - number of attributes
+ *    @param[out] attr_list - array of attributes
+ *
+ * Return Values:
+ *    @return  SAI_STATUS_SUCCESS on success
+ *             Failure status code on error
+ */
+static sai_status_t mlnx_get_acl_range_attribute(_In_ sai_object_id_t   acl_range_id,
+                                                 _In_ uint32_t          attr_count,
+                                                 _Out_ sai_attribute_t *attr_list)
+{
+    const sai_object_key_t key = { .object_id = acl_range_id };
+    char                   key_str[MAX_KEY_STR_LEN];
+
+    SX_LOG_ENTER();
+
+    acl_range_key_to_str(acl_range_id, key_str);
+    return sai_get_attributes(&key, key_str, acl_range_attribs, acl_range_vendor_attribs, attr_count, attr_list);
+}
+
+
+const sai_acl_api_t mlnx_acl_api = {
     mlnx_create_acl_table,
     mlnx_delete_acl_table,
     mlnx_set_acl_table_attribute,
@@ -8968,5 +9091,9 @@ const sai_acl_api_t acl_api = {
     mlnx_create_acl_counter,
     mlnx_delete_acl_counter,
     mlnx_set_acl_counter_attribute,
-    mlnx_get_acl_counter_attribute
+    mlnx_get_acl_counter_attribute,
+    mlnx_create_acl_range,
+    mlnx_remove_acl_range,
+    mlnx_set_acl_range_attribute,
+    mlnx_get_acl_range_attribute
 };
